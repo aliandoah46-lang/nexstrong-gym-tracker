@@ -1,0 +1,1924 @@
+<!DOCTYPE html>
+<html lang="id" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>NEXSTRONG Gym Tracker - Science-Based Lifting Edition</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            500: '#ff6600',
+                            600: '#e65c00',
+                            700: '#cc5200',
+                            glow: 'rgba(255, 102, 0, 0.25)'
+                        },
+                        dark: {
+                            bg: '#0f0f12',
+                            card: '#18181c',
+                            border: '#26262b',
+                            hover: '#222226'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        * {
+            font-family: 'Inter', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0f0f12;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #26262b;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #ff6600;
+        }
+        .btn-touch {
+            min-height: 44px;
+            min-width: 44px;
+        }
+    </style>
+</head>
+<body class="bg-dark-bg text-gray-100 flex flex-col md:flex-row min-h-screen pb-20 md:pb-0 overflow-x-hidden">
+
+    <!-- DESKTOP SIDEBAR -->
+    <aside class="hidden md:flex flex-col w-64 bg-dark-card border-r border-dark-border p-5 sticky top-0 h-screen justify-between z-20">
+        <div>
+            <!-- Logo -->
+            <div class="flex items-center gap-3 mb-8 px-2">
+                <div class="w-10 h-10 bg-gradient-to-tr from-brand-600 to-orange-400 rounded-xl flex items-center justify-center text-black font-black text-xl shadow-lg shadow-brand-glow">
+                    N
+                </div>
+                <div>
+                    <h1 class="font-extrabold text-lg tracking-wider bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent">NEXSTRONG</h1>
+                    <p class="text-[10px] text-brand-500 font-bold tracking-widest uppercase">SCIENCE-BASED TRACKER</p>
+                </div>
+            </div>
+
+            <!-- Navigation Links -->
+            <nav class="space-y-1.5" id="desktopNav">
+                <button onclick="switchTab('dashboard')" data-tab="dashboard" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl transition text-gray-400 hover:text-white hover:bg-dark-hover">
+                    <i class="fa-solid fa-house text-lg w-6"></i>
+                    <span class="font-medium text-sm">Dashboard</span>
+                </button>
+                <button onclick="switchTab('workout')" data-tab="workout" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl transition text-gray-400 hover:text-white hover:bg-dark-hover">
+                    <i class="fa-solid fa-dumbbell text-lg w-6"></i>
+                    <span class="font-medium text-sm">Mulai Latihan</span>
+                </button>
+                <button onclick="switchTab('science')" data-tab="science" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl transition text-gray-400 hover:text-white hover:bg-dark-hover">
+                    <i class="fa-solid fa-flask-vial text-lg w-6"></i>
+                    <span class="font-medium text-sm">Sains Lifting</span>
+                </button>
+                <button onclick="switchTab('exercises')" data-tab="exercises" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl transition text-gray-400 hover:text-white hover:bg-dark-hover">
+                    <i class="fa-solid fa-book-open text-lg w-6"></i>
+                    <span class="font-medium text-sm">Katalog Latihan</span>
+                </button>
+                <button onclick="switchTab('programs')" data-tab="programs" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl transition text-gray-400 hover:text-white hover:bg-dark-hover">
+                    <i class="fa-solid fa-calendar-days text-lg w-6"></i>
+                    <span class="font-medium text-sm">Program Latihan</span>
+                </button>
+                <button onclick="switchTab('overload')" data-tab="overload" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl transition text-gray-400 hover:text-white hover:bg-dark-hover">
+                    <i class="fa-solid fa-chart-line text-lg w-6"></i>
+                    <span class="font-medium text-sm">Progressive Overload</span>
+                </button>
+                <button onclick="switchTab('history')" data-tab="history" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl transition text-gray-400 hover:text-white hover:bg-dark-hover">
+                    <i class="fa-solid fa-clock-rotate-left text-lg w-6"></i>
+                    <span class="font-medium text-sm">Riwayat & Stats</span>
+                </button>
+                <button onclick="switchTab('profile')" data-tab="profile" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl transition text-gray-400 hover:text-white hover:bg-dark-hover">
+                    <i class="fa-solid fa-user text-lg w-6"></i>
+                    <span class="font-medium text-sm">Profil & Pengaturan</span>
+                </button>
+            </nav>
+        </div>
+
+        <!-- Timer Mini Widget -->
+        <div id="sidebarTimerWidget" class="hidden bg-dark-bg p-4 rounded-xl border border-dark-border text-center">
+            <p class="text-xs text-gray-400 uppercase font-bold mb-1">Rest Timer</p>
+            <div id="sidebarTimerDisplay" class="text-2xl font-black text-brand-500 font-mono">00:00</div>
+            <div class="flex justify-center gap-2 mt-2">
+                <button onclick="toggleTimer()" id="sidebarTimerPlayBtn" class="text-xs px-3 py-1 bg-brand-500 text-black font-bold rounded-lg"><i class="fa-solid fa-play"></i></button>
+                <button onclick="resetTimer()" class="text-xs px-3 py-1 bg-dark-hover text-gray-300 rounded-lg"><i class="fa-solid fa-rotate-right"></i></button>
+            </div>
+        </div>
+    </aside>
+
+    <!-- MOBILE BOTTOM NAVIGATION -->
+    <nav class="md:hidden fixed bottom-0 left-0 right-0 bg-dark-card border-t border-dark-border z-30 flex justify-around p-2 backdrop-blur-md bg-opacity-95" id="mobileNav">
+        <button onclick="switchTab('dashboard')" data-tab="dashboard" class="mobile-nav-item flex flex-col items-center p-2 text-gray-400">
+            <i class="fa-solid fa-house text-lg"></i>
+            <span class="text-[10px] mt-1 font-medium">Beranda</span>
+        </button>
+        <button onclick="switchTab('workout')" data-tab="workout" class="mobile-nav-item flex flex-col items-center p-2 text-brand-500">
+            <div class="w-10 h-10 -mt-5 bg-brand-500 text-black rounded-full flex items-center justify-center shadow-lg shadow-brand-glow">
+                <i class="fa-solid fa-play text-base ml-0.5"></i>
+            </div>
+            <span class="text-[10px] mt-1 font-bold">Latihan</span>
+        </button>
+        <button onclick="switchTab('science')" data-tab="science" class="mobile-nav-item flex flex-col items-center p-2 text-gray-400">
+            <i class="fa-solid fa-flask-vial text-lg"></i>
+            <span class="text-[10px] mt-1 font-medium">Sains</span>
+        </button>
+        <button onclick="switchTab('history')" data-tab="history" class="mobile-nav-item flex flex-col items-center p-2 text-gray-400">
+            <i class="fa-solid fa-chart-line text-lg"></i>
+            <span class="text-[10px] mt-1 font-medium">Stats</span>
+        </button>
+        <button onclick="switchTab('profile')" data-tab="profile" class="mobile-nav-item flex flex-col items-center p-2 text-gray-400">
+            <i class="fa-solid fa-user text-lg"></i>
+            <span class="text-[10px] mt-1 font-medium">Profil</span>
+        </button>
+    </nav>
+
+    <!-- MAIN CONTENT AREA -->
+    <main class="flex-1 p-4 md:p-8 max-w-7xl mx-auto w-full">
+
+        <!-- 1. DASHBOARD PAGE -->
+        <section id="page-dashboard" class="page-content space-y-6">
+            <!-- Header Greeting -->
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-gradient-to-r from-dark-card to-dark-hover p-6 rounded-2xl border border-dark-border">
+                <div>
+                    <h2 class="text-2xl md:text-3xl font-black tracking-tight" id="dashGreeting">Halo, Athlete! 🔥</h2>
+                    <p class="text-sm text-gray-400 mt-1" id="dashDate">Senin, 24 Oktober 2026</p>
+                </div>
+                <button onclick="switchTab('workout')" class="bg-brand-500 hover:bg-brand-600 text-black font-extrabold px-6 py-3.5 rounded-xl transition flex items-center justify-center gap-2 shadow-lg shadow-brand-glow btn-touch">
+                    <i class="fa-solid fa-fire text-lg"></i>
+                    <span>MULAI LATIHAN HARI INI</span>
+                </button>
+            </div>
+
+            <!-- Science Quick Tip Banner -->
+            <div class="bg-gradient-to-r from-orange-950/40 via-dark-card to-dark-card p-4 rounded-xl border border-brand-500/30 flex items-start gap-3">
+                <i class="fa-solid fa-flask-vial text-brand-500 text-xl mt-0.5"></i>
+                <div class="text-xs space-y-1">
+                    <p class="font-bold text-white">Science-Based Tip: RIR & Hypertrophy</p>
+                    <p class="text-gray-300">Untuk pertumbuhan otot (*hypertrophy*) maksimal, jaga set Anda di intensitas **RIR 1–3** (sisa 1 sampai 3 reps sebelum failure total) pada sebagian besar *working set*.</p>
+                </div>
+            </div>
+
+            <!-- Stats Grid -->
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="bg-dark-card p-4 rounded-xl border border-dark-border">
+                    <div class="flex items-center justify-between text-gray-400 mb-2">
+                        <span class="text-xs font-semibold uppercase">Latihan Hari Ini</span>
+                        <i class="fa-solid fa-calendar-check text-brand-500"></i>
+                    </div>
+                    <p class="text-2xl font-black text-white" id="statTodayWorkouts">0</p>
+                    <p class="text-[11px] text-gray-400 mt-1">Sesi selesai</p>
+                </div>
+                <div class="bg-dark-card p-4 rounded-xl border border-dark-border">
+                    <div class="flex items-center justify-between text-gray-400 mb-2">
+                        <span class="text-xs font-semibold uppercase">Total Set</span>
+                        <i class="fa-solid fa-layer-group text-brand-500"></i>
+                    </div>
+                    <p class="text-2xl font-black text-white" id="statTotalSets">0</p>
+                    <p class="text-[11px] text-gray-400 mt-1">Set terselesaikan hari ini</p>
+                </div>
+                <div class="bg-dark-card p-4 rounded-xl border border-dark-border">
+                    <div class="flex items-center justify-between text-gray-400 mb-2">
+                        <span class="text-xs font-semibold uppercase">Total Reps</span>
+                        <i class="fa-solid fa-rotate-right text-brand-500"></i>
+                    </div>
+                    <p class="text-2xl font-black text-white" id="statTotalReps">0</p>
+                    <p class="text-[11px] text-gray-400 mt-1">Repetisi akumulasi</p>
+                </div>
+                <div class="bg-dark-card p-4 rounded-xl border border-dark-border">
+                    <div class="flex items-center justify-between text-gray-400 mb-2">
+                        <span class="text-xs font-semibold uppercase">Total Volume</span>
+                        <i class="fa-solid fa-weight-hanging text-brand-500"></i>
+                    </div>
+                    <p class="text-2xl font-black text-white" id="statTotalVolume">0 <span class="text-xs font-normal text-gray-400">kg</span></p>
+                    <p class="text-[11px] text-gray-400 mt-1">Total beban diangkat</p>
+                </div>
+            </div>
+
+            <!-- Chart & Schedule Section -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Volume Chart -->
+                <div class="lg:col-span-2 bg-dark-card p-5 rounded-2xl border border-dark-border flex flex-col justify-between">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="font-bold text-lg flex items-center gap-2">
+                            <i class="fa-solid fa-chart-column text-brand-500"></i> Progres Volume Beban (7 Hari Terakhir)
+                        </h3>
+                    </div>
+                    <div class="h-64 w-full relative">
+                        <canvas id="dashVolumeChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Weekly Schedule Schedule -->
+                <div class="bg-dark-card p-5 rounded-2xl border border-dark-border flex flex-col justify-between">
+                    <div>
+                        <h3 class="font-bold text-lg mb-4 flex items-center justify-between">
+                            <span class="flex items-center gap-2"><i class="fa-solid fa-calendar-days text-brand-500"></i> Jadwal Minggu Ini</span>
+                            <button onclick="switchTab('programs')" class="text-xs text-brand-500 hover:underline">Kelola</button>
+                        </h3>
+                        <div class="space-y-2.5" id="dashWeeklySchedule">
+                            <!-- JS Populated -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Workouts -->
+            <div class="bg-dark-card p-5 rounded-2xl border border-dark-border">
+                <h3 class="font-bold text-lg mb-4 flex items-center gap-2">
+                    <i class="fa-solid fa-history text-brand-500"></i> Riwayat Latihan Terakhir
+                </h3>
+                <div id="dashRecentWorkouts" class="space-y-3">
+                    <!-- JS Populated -->
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. MODE MULAI LATIHAN / ACTIVE WORKOUT PAGE -->
+        <section id="page-workout" class="page-content hidden space-y-6">
+            <!-- Active Workout Header / Setup -->
+            <div class="bg-dark-card p-5 rounded-2xl border border-dark-border space-y-4">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div>
+                        <span class="text-xs font-bold text-brand-500 uppercase tracking-wider">Active Session</span>
+                        <input type="text" id="activeWorkoutTitle" value="Sesi Latihan Gym" class="bg-transparent text-xl md:text-2xl font-black text-white focus:outline-none border-b border-transparent focus:border-brand-500 w-full sm:w-auto">
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <button onclick="openExerciseSelectorModal()" class="bg-brand-500 text-black px-4 py-2 rounded-xl font-bold text-sm flex items-center gap-2 hover:bg-brand-600 transition btn-touch">
+                            <i class="fa-solid fa-plus"></i> Tambah Latihan
+                        </button>
+                        <button onclick="openAfterGymModal()" class="bg-green-600 text-white px-4 py-2 rounded-xl font-bold text-sm flex items-center gap-2 hover:bg-green-700 transition btn-touch">
+                            <i class="fa-solid fa-check font-black"></i> Selesai Sesi
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Rest Timer Widget Block -->
+                <div class="bg-dark-bg p-4 rounded-xl border border-dark-border flex flex-wrap items-center justify-between gap-4">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-xl bg-dark-hover flex items-center justify-center text-brand-500">
+                            <i class="fa-solid fa-stopwatch text-xl"></i>
+                        </div>
+                        <div>
+                            <p class="text-xs text-gray-400 font-semibold">REST TIMER (SCIENCE OPTIMAL: 2-3 MIN)</p>
+                            <p id="workoutTimerDisplay" class="text-2xl font-black text-white font-mono">00:00</p>
+                        </div>
+                    </div>
+                    <!-- Quick Timers -->
+                    <div class="flex items-center flex-wrap gap-1.5">
+                        <button onclick="startTimer(60)" class="px-2.5 py-1 bg-dark-hover hover:bg-brand-500 hover:text-black rounded-lg text-xs font-semibold text-gray-300 transition">60s</button>
+                        <button onclick="startTimer(90)" class="px-2.5 py-1 bg-dark-hover hover:bg-brand-500 hover:text-black rounded-lg text-xs font-semibold text-gray-300 transition">90s</button>
+                        <button onclick="startTimer(120)" class="px-2.5 py-1 bg-dark-hover hover:bg-brand-500 hover:text-black rounded-lg text-xs font-semibold text-gray-300 transition">2 min</button>
+                        <button onclick="startTimer(150)" class="px-2.5 py-1 bg-dark-hover hover:bg-brand-500 hover:text-black rounded-lg text-xs font-semibold text-gray-300 transition">2.5 min</button>
+                        <button onclick="startTimer(180)" class="px-2.5 py-1 bg-dark-hover hover:bg-brand-500 hover:text-black rounded-lg text-xs font-semibold text-gray-300 transition">3 min</button>
+                    </div>
+                    <!-- Timer Controls -->
+                    <div class="flex items-center gap-2">
+                        <button onclick="toggleTimer()" id="timerToggleBtn" class="bg-brand-500 text-black font-bold px-3 py-1.5 rounded-lg text-xs">
+                            <i class="fa-solid fa-play"></i> Mulai
+                        </button>
+                        <button onclick="resetTimer()" class="bg-dark-hover text-gray-300 font-semibold px-3 py-1.5 rounded-lg text-xs">
+                            Reset
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Active Workout Exercises Container -->
+            <div id="activeExercisesList" class="space-y-6">
+                <!-- JS Populated list of exercises for current session -->
+            </div>
+        </section>
+
+        <!-- 3. SAINS BASED LIFTING PAGE -->
+        <section id="page-science" class="page-content hidden space-y-6">
+            <div>
+                <h2 class="text-2xl font-black flex items-center gap-2">
+                    <i class="fa-solid fa-flask-vial text-brand-500"></i> Sains-Based Lifting Framework
+                </h2>
+                <p class="text-sm text-gray-400 mt-1">Prinsip ilmiah modern untuk mengoptimalkan pertumbuhan otot (Hypertrophy) & kekuatan secara maksimal.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Card 1: RIR & Failure -->
+                <div class="bg-dark-card p-6 rounded-2xl border border-dark-border space-y-3">
+                    <div class="w-10 h-10 bg-brand-500/10 text-brand-500 rounded-xl flex items-center justify-center text-xl font-bold mb-2">
+                        <i class="fa-solid fa-gauge-high"></i>
+                    </div>
+                    <h3 class="font-bold text-lg text-white">1. RIR (Reps in Reserve) & failure</h3>
+                    <p class="text-xs text-gray-300 leading-relaxed">
+                        Studi menunjukkan bahwa set tidak harus dilakukan sampai *true failure* total untuk memicu hipertrofi maksimal. Melakukan set hingga **RIR 1–3** (berhenti 1 hingga 3 repetisi sebelum gagal) memberikan stimulus pertumbuhan otot yang sama efektifnya dengan tingkat kelelahan saraf yang jauh lebih rendah.
+                    </p>
+                    <div class="bg-dark-bg p-3 rounded-xl border border-dark-border text-xs text-gray-400 space-y-1">
+                        <p><strong class="text-brand-500">RIR 0:</strong> Failure (0 reps tersisa)</p>
+                        <p><strong class="text-white">RIR 1-2:</strong> Zona Manis Hypertrophy (Optimal)</p>
+                        <p><strong class="text-gray-500">RIR 4+:</strong> Terlalu ringan / Warm-up</p>
+                    </div>
+                </div>
+
+                <!-- Card 2: Progressive Overload -->
+                <div class="bg-dark-card p-6 rounded-2xl border border-dark-border space-y-3">
+                    <div class="w-10 h-10 bg-brand-500/10 text-brand-500 rounded-xl flex items-center justify-center text-xl font-bold mb-2">
+                        <i class="fa-solid fa-chart-line"></i>
+                    </div>
+                    <h3 class="font-bold text-lg text-white">2. Double Progression System</h3>
+                    <p class="text-xs text-gray-300 leading-relaxed">
+                        Metode paling aman untuk *progressive overload*. Tentukan rentang repetisi target (contoh: 8–12 reps). Pertahankan beban yang sama sampai Anda bisa melakukan 12 reps dengan RIR 1-2 pada semua set, lalu baru naikkan beban sedikit (+2.5 kg) pada sesi berikutnya.
+                    </p>
+                    <div class="bg-dark-bg p-3 rounded-xl border border-dark-border text-xs text-gray-400">
+                        <p class="italic text-brand-500">"Prioritaskan bentuk & repetisi sempurna sebelum menambah beban berat!"</p>
+                    </div>
+                </div>
+
+                <!-- Card 3: Volume & Frequency -->
+                <div class="bg-dark-card p-6 rounded-2xl border border-dark-border space-y-3">
+                    <div class="w-10 h-10 bg-brand-500/10 text-brand-500 rounded-xl flex items-center justify-center text-xl font-bold mb-2">
+                        <i class="fa-solid fa-cubes"></i>
+                    </div>
+                    <h3 class="font-bold text-lg text-white">3. Volume & Frekuensi Optima</h3>
+                    <p class="text-xs text-gray-300 leading-relaxed">
+                        Riset Meta-Analisis menyarankan **10–20 hard sets** per kelompok otot per minggu. Melatih kelompok otot **2 kali seminggu** (misal: Push/Pull/Legs atau Upper/Lower) merangsang sintesis protein otot (MPS) lebih merata dibanding *Bro-Split* 1x seminggu.
+                    </p>
+                </div>
+
+                <!-- Card 4: Rest Intervals -->
+                <div class="bg-dark-card p-6 rounded-2xl border border-dark-border space-y-3">
+                    <div class="w-10 h-10 bg-brand-500/10 text-brand-500 rounded-xl flex items-center justify-center text-xl font-bold mb-2">
+                        <i class="fa-solid fa-stopwatch"></i>
+                    </div>
+                    <h3 class="font-bold text-lg text-white">4. Istirahat Antar Set (2–3 Menit)</h3>
+                    <p class="text-xs text-gray-300 leading-relaxed">
+                        Mitos lama menyatakan istirahat singkat (30-60 detik) bagus untuk pump. Namun, penelitian ilmiah membuktikan istirahat **2 hingga 3 menit** pada gerakan kompon memungkinkan pemulihan ATP & sistem saraf yang cukup, sehingga Anda bisa mengangkat beban lebih berat di set berikutnya.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. KATALOG LATIHAN PAGE -->
+        <section id="page-exercises" class="page-content hidden space-y-6">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div>
+                    <h2 class="text-2xl font-black">Katalog Latihan Gym</h2>
+                    <p class="text-sm text-gray-400">Daftar latihan lengkap berdasarkan kelompok otot dan peralatan.</p>
+                </div>
+            </div>
+
+            <!-- Search & Filters -->
+            <div class="bg-dark-card p-4 rounded-2xl border border-dark-border space-y-4">
+                <div class="relative">
+                    <i class="fa-solid fa-magnifying-glass absolute left-4 top-3.5 text-gray-400"></i>
+                    <input type="text" id="exerciseSearchInput" onkeyup="filterExercises()" placeholder="Cari latihan (contoh: Bench Press, Squat)..." class="w-full bg-dark-bg border border-dark-border rounded-xl pl-11 pr-4 py-3 text-sm focus:outline-none focus:border-brand-500 text-white">
+                </div>
+                
+                <!-- Otot Filter Tabs -->
+                <div>
+                    <p class="text-xs text-gray-400 font-semibold mb-2">Filter Kelompok Otot:</p>
+                    <div class="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none" id="muscleFilterContainer">
+                        <!-- JS Populated -->
+                    </div>
+                </div>
+
+                <!-- Equipment Filter Tabs -->
+                <div>
+                    <p class="text-xs text-gray-400 font-semibold mb-2">Filter Peralatan:</p>
+                    <div class="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none" id="equipFilterContainer">
+                        <!-- JS Populated -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Exercise Grid List -->
+            <div id="exerciseCatalogGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <!-- JS Populated exercise cards -->
+            </div>
+        </section>
+
+        <!-- 5. PROGRAM LATIHAN PAGE -->
+        <section id="page-programs" class="page-content hidden space-y-6">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div>
+                    <h2 class="text-2xl font-black">Program & Split Latihan</h2>
+                    <p class="text-sm text-gray-400">Pilih template standar atau buat jadwal latihan kustom Anda sendiri.</p>
+                </div>
+                <button onclick="createCustomProgram()" class="bg-brand-500 text-black font-extrabold px-4 py-2.5 rounded-xl text-sm flex items-center gap-2 hover:bg-brand-600 transition btn-touch">
+                    <i class="fa-solid fa-plus"></i> Buat Program Kustom
+                </button>
+            </div>
+
+            <!-- Templates List -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="programsTemplateGrid">
+                <!-- JS Populated Template Cards -->
+            </div>
+
+            <!-- Active User Schedule Configuration -->
+            <div class="bg-dark-card p-6 rounded-2xl border border-dark-border space-y-4">
+                <div class="flex items-center justify-between">
+                    <h3 class="font-bold text-lg flex items-center gap-2">
+                        <i class="fa-solid fa-calendar-check text-brand-500"></i> Pengaturan Jadwal Mingguan Anda
+                    </h3>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-7 gap-3" id="weeklyScheduleConfig">
+                    <!-- JS Populated 7 Days configuration -->
+                </div>
+            </div>
+        </section>
+
+        <!-- 6. PROGRESSIVE OVERLOAD PAGE -->
+        <section id="page-overload" class="page-content hidden space-y-6">
+            <div>
+                <h2 class="text-2xl font-black">Analisis Progressive Overload</h2>
+                <p class="text-sm text-gray-400">Pantau perkembangan beban & repetisi serta rekomendasi kenaikan secara bertahan.</p>
+            </div>
+
+            <!-- Exercise Picker -->
+            <div class="bg-dark-card p-4 rounded-2xl border border-dark-border">
+                <label class="block text-xs font-semibold text-gray-400 mb-2">Pilih Latihan Untuk Dianalisis:</label>
+                <select id="overloadExerciseSelect" onchange="renderOverloadAnalysis()" class="w-full bg-dark-bg border border-dark-border rounded-xl p-3 text-sm text-white focus:outline-none focus:border-brand-500">
+                    <!-- JS Populated -->
+                </select>
+            </div>
+
+            <!-- Exercise Detail Overview Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="bg-dark-card p-5 rounded-xl border border-dark-border">
+                    <p class="text-xs text-gray-400 uppercase font-semibold">Rekor Beban Maksimal (PR)</p>
+                    <p class="text-3xl font-black text-brand-500 mt-1" id="overloadPR">0 kg</p>
+                    <p class="text-xs text-gray-400 mt-1" id="overloadPRDetails">-</p>
+                </div>
+                <div class="bg-dark-card p-5 rounded-xl border border-dark-border">
+                    <p class="text-xs text-gray-400 uppercase font-semibold">Beban Terakhir Digunakan</p>
+                    <p class="text-3xl font-black text-white mt-1" id="overloadLastWeight">0 kg</p>
+                    <p class="text-xs text-gray-400 mt-1" id="overloadLastReps">-</p>
+                </div>
+                <div class="bg-dark-card p-5 rounded-xl border border-dark-border bg-gradient-to-br from-dark-card to-dark-hover">
+                    <p class="text-xs font-semibold text-brand-500 uppercase flex items-center gap-1">
+                        <i class="fa-solid fa-lightbulb"></i> Rekomendasi Sains Overload
+                    </p>
+                    <p class="text-2xl font-black text-green-400 mt-1" id="overloadRecommendation">Tetap di Beban Saat Ini</p>
+                    <p class="text-[11px] text-gray-400 mt-1" id="overloadReason">Lengkapi data latihan untuk saran akurat.</p>
+                </div>
+            </div>
+
+            <!-- Progress Chart -->
+            <div class="bg-dark-card p-5 rounded-2xl border border-dark-border">
+                <h3 class="font-bold text-lg mb-4">Grafik Riwayat Beban Maksimal (1RM Est.)</h3>
+                <div class="h-64 w-full relative">
+                    <canvas id="overloadChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Exercise Session Log History Table -->
+            <div class="bg-dark-card p-5 rounded-2xl border border-dark-border">
+                <h3 class="font-bold text-lg mb-4">Riwayat Sesi Latihan Ini</h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm text-gray-300">
+                        <thead class="bg-dark-bg text-gray-400 uppercase text-[10px]">
+                            <tr>
+                                <th class="p-3">Tanggal</th>
+                                <th class="p-3">Set, Reps & RIR</th>
+                                <th class="p-3">Est. 1RM</th>
+                                <th class="p-3">Total Volume</th>
+                            </tr>
+                        </thead>
+                        <tbody id="overloadHistoryTable" class="divide-y divide-dark-border">
+                            <!-- JS Populated -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- 7. RIWAYAT & STATISTIK PAGE -->
+        <section id="page-history" class="page-content hidden space-y-6">
+            <div>
+                <h2 class="text-2xl font-black">Riwayat & Statistik Latihan</h2>
+                <p class="text-sm text-gray-400">Statistik lengkap performa latihan, evaluasi after gym, dan galeri foto progres.</p>
+            </div>
+
+            <!-- Muscle Volume Breakdown Chart -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="bg-dark-card p-5 rounded-2xl border border-dark-border">
+                    <h3 class="font-bold text-lg mb-4">Distribusi Set Per Otot (Total)</h3>
+                    <div class="h-64 w-full relative flex items-center justify-center">
+                        <canvas id="muscleDistributionChart"></canvas>
+                    </div>
+                </div>
+                <div class="bg-dark-card p-5 rounded-2xl border border-dark-border flex flex-col justify-between">
+                    <div>
+                        <h3 class="font-bold text-lg mb-2">Informasi Penting Volume</h3>
+                        <p class="text-xs text-gray-400 leading-relaxed mb-4">
+                            <strong>Rumus Volume Latihan:</strong><br>
+                            <code class="bg-dark-bg px-2 py-1 rounded text-brand-500">Volume = Σ (Beban (kg) × Repetisi)</code>
+                        </p>
+                        <div class="bg-dark-bg p-4 rounded-xl border border-dark-border text-xs text-gray-300 space-y-2">
+                            <p class="flex items-center gap-2 text-yellow-500 font-bold">
+                                <i class="fa-solid fa-triangle-exclamation"></i> Catatan Evaluasi:
+                            </p>
+                            <p>Angka volume ini merupakan akumulasi beban eksternal. Perhatikan juga indikator RPE / RIR & Muscle Pump pada catatan After Gym Anda.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Full Logs List with After Gym Data -->
+            <div class="bg-dark-card p-5 rounded-2xl border border-dark-border">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="font-bold text-lg flex items-center gap-2">
+                        <i class="fa-solid fa-list-check text-brand-500"></i> Catatan & Log Sesi Latihan
+                    </h3>
+                </div>
+                <div id="fullHistoryLogs" class="space-y-4">
+                    <!-- JS Populated -->
+                </div>
+            </div>
+        </section>
+
+        <!-- 8. PROFIL & PENGATURAN PAGE -->
+        <section id="page-profile" class="page-content hidden space-y-6">
+            <div>
+                <h2 class="text-2xl font-black">Profil & Pengaturan Aplikasi</h2>
+                <p class="text-sm text-gray-400">Atur profil atletik, preferences, dan pencadangan data offline Anda.</p>
+            </div>
+
+            <!-- User Profile Form -->
+            <div class="bg-dark-card p-6 rounded-2xl border border-dark-border space-y-4">
+                <h3 class="font-bold text-lg border-b border-dark-border pb-3 flex items-center gap-2">
+                    <i class="fa-solid fa-user-gear text-brand-500"></i> Data Profil Pengguna
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-400 mb-1">Nama Pengguna</label>
+                        <input type="text" id="profName" class="w-full bg-dark-bg border border-dark-border rounded-xl p-3 text-sm text-white focus:outline-none focus:border-brand-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-400 mb-1">Target Fitness</label>
+                        <select id="profGoal" class="w-full bg-dark-bg border border-dark-border rounded-xl p-3 text-sm text-white focus:outline-none focus:border-brand-500">
+                            <option value="Membangun Otot (Hypertrophy)">Membangun Otot (Hypertrophy)</option>
+                            <option value="Meningkatkan Kekuatan (Strength)">Meningkatkan Kekuatan (Strength)</option>
+                            <option value="Kebugaran Umum & Body Fat Reduction">Kebugaran Umum & Body Fat Reduction</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-400 mb-1">Tingkat Latihan</label>
+                        <select id="profLevel" class="w-full bg-dark-bg border border-dark-border rounded-xl p-3 text-sm text-white focus:outline-none focus:border-brand-500">
+                            <option value="Pemula (Beginner)">Pemula (Beginner)</option>
+                            <option value="Menengah (Intermediate)">Menengah (Intermediate)</option>
+                            <option value="Lanjutan (Advanced)">Lanjutan (Advanced)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-400 mb-1">Target Frekuensi Latihan / Minggu</label>
+                        <input type="number" min="1" max="7" id="profTargetDays" class="w-full bg-dark-bg border border-dark-border rounded-xl p-3 text-sm text-white focus:outline-none focus:border-brand-500">
+                    </div>
+                </div>
+                <button onclick="saveUserProfile()" class="bg-brand-500 text-black font-extrabold px-6 py-2.5 rounded-xl text-sm hover:bg-brand-600 transition btn-touch">
+                    Simpan Perubahan Profil
+                </button>
+            </div>
+
+            <!-- Data Management & Storage -->
+            <div class="bg-dark-card p-6 rounded-2xl border border-dark-border space-y-4">
+                <h3 class="font-bold text-lg border-b border-dark-border pb-3 flex items-center gap-2">
+                    <i class="fa-solid fa-database text-brand-500"></i> Manajemen Data & Backup (LocalStorage)
+                </h3>
+                
+                <div class="bg-dark-bg p-4 rounded-xl border border-dark-border text-xs text-gray-300 space-y-2">
+                    <p class="font-bold text-orange-400 flex items-center gap-2">
+                        <i class="fa-solid fa-circle-info"></i> Informasi Penyimpanan Offline:
+                    </p>
+                    <p>Aplikasi ini menyimpan seluruh data latihan di dalam <strong>localStorage browser lokal Anda</strong>. Data tidak dikirim ke cloud. Harap lakukan ekspor cadangan file JSON secara berkala agar riwayat Anda aman jika cache browser dibersihkan.</p>
+                </div>
+
+                <div class="flex flex-wrap gap-3 pt-2">
+                    <button onclick="exportDataJSON()" class="bg-dark-hover border border-dark-border hover:border-brand-500 text-white px-4 py-2.5 rounded-xl text-sm font-semibold flex items-center gap-2 transition btn-touch">
+                        <i class="fa-solid fa-download text-brand-500"></i> Ekspor Data JSON
+                    </button>
+
+                    <label class="bg-dark-hover border border-dark-border hover:border-brand-500 text-white px-4 py-2.5 rounded-xl text-sm font-semibold flex items-center gap-2 transition cursor-pointer btn-touch">
+                        <i class="fa-solid fa-upload text-brand-500"></i> Impor Data JSON
+                        <input type="file" id="importJsonInput" accept=".json" class="hidden" onchange="importDataJSON(event)">
+                    </label>
+
+                    <button onclick="clearAllDataConfirm()" class="bg-red-900/30 border border-red-700/50 hover:bg-red-900/50 text-red-300 px-4 py-2.5 rounded-xl text-sm font-semibold flex items-center gap-2 transition ml-auto btn-touch">
+                        <i class="fa-solid fa-trash"></i> Hapus Seluruh Data
+                    </button>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- MODAL 1: EXERCISE SELECTOR FOR WORKOUT -->
+    <div id="exerciseModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-dark-card border border-dark-border w-full max-w-2xl rounded-2xl flex flex-col max-h-[90vh] shadow-2xl overflow-hidden">
+            <div class="p-4 border-b border-dark-border flex items-center justify-between">
+                <h3 class="font-bold text-lg">Pilih Latihan untuk Ditambahkan</h3>
+                <button onclick="closeExerciseSelectorModal()" class="w-8 h-8 rounded-full bg-dark-bg flex items-center justify-center text-gray-400 hover:text-white">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="p-4 border-b border-dark-border space-y-2">
+                <input type="text" id="modalSearchInput" onkeyup="renderModalExercises()" placeholder="Cari latihan..." class="w-full bg-dark-bg border border-dark-border rounded-xl p-2.5 text-sm text-white focus:outline-none focus:border-brand-500">
+                <div class="flex gap-2 overflow-x-auto pb-1 text-xs" id="modalMuscleFilter">
+                    <!-- JS Populated Muscle Buttons -->
+                </div>
+            </div>
+            <div class="flex-1 overflow-y-auto p-4 space-y-2" id="modalExerciseList">
+                <!-- JS Populated Exercises -->
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 2: AFTER GYM LOG & EVALUATION -->
+    <div id="afterGymModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-dark-card border border-dark-border w-full max-w-lg rounded-2xl flex flex-col max-h-[90vh] shadow-2xl overflow-hidden">
+            <div class="p-4 border-b border-dark-border flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                    <i class="fa-solid fa-heart-pulse text-brand-500"></i>
+                    <h3 class="font-bold text-lg">Evaluasi & Log After Gym</h3>
+                </div>
+                <button onclick="closeAfterGymModal()" class="w-8 h-8 rounded-full bg-dark-bg flex items-center justify-center text-gray-400 hover:text-white">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="p-6 space-y-4 overflow-y-auto">
+                <!-- Mood Rating -->
+                <div>
+                    <label class="block text-xs font-semibold text-gray-400 mb-2">Perasaan / Energy Level (1-5):</label>
+                    <div class="flex justify-between gap-2" id="afterGymMoodGroup">
+                        <button type="button" onclick="setAfterGymMood(1)" class="mood-btn flex-1 py-2 bg-dark-bg border border-dark-border rounded-xl text-lg hover:border-brand-500">😫</button>
+                        <button type="button" onclick="setAfterGymMood(2)" class="mood-btn flex-1 py-2 bg-dark-bg border border-dark-border rounded-xl text-lg hover:border-brand-500">😐</button>
+                        <button type="button" onclick="setAfterGymMood(3)" class="mood-btn flex-1 py-2 bg-dark-bg border border-dark-border rounded-xl text-lg hover:border-brand-500">🙂</button>
+                        <button type="button" onclick="setAfterGymMood(4)" class="mood-btn flex-1 py-2 bg-dark-bg border border-dark-border rounded-xl text-lg hover:border-brand-500">🔥</button>
+                        <button type="button" onclick="setAfterGymMood(5)" class="mood-btn flex-1 py-2 bg-dark-bg border border-dark-border rounded-xl text-lg hover:border-brand-500">🚀</button>
+                    </div>
+                </div>
+
+                <!-- Muscle Pump Level -->
+                <div>
+                    <label class="block text-xs font-semibold text-gray-400 mb-1">Muscle Pump / Pompa Otot:</label>
+                    <select id="afterGymPump" class="w-full bg-dark-bg border border-dark-border rounded-xl p-3 text-sm text-white focus:outline-none focus:border-brand-500">
+                        <option value="Maksimal (Insane Pump 🔥)">Maksimal (Insane Pump 🔥)</option>
+                        <option value="Bagus (Solid Pump 💪)">Bagus (Solid Pump 💪)</option>
+                        <option value="Sedang (Moderate)">Sedang (Moderate)</option>
+                        <option value="Kurang Terasa (Low Pump)">Kurang Terasa (Low Pump)</option>
+                    </select>
+                </div>
+
+                <!-- RPE Effort Level -->
+                <div>
+                    <label class="block text-xs font-semibold text-gray-400 mb-1">RPE / Intensity Score (1-10):</label>
+                    <select id="afterGymRpe" class="w-full bg-dark-bg border border-dark-border rounded-xl p-3 text-sm text-white focus:outline-none focus:border-brand-500">
+                        <option value="RPE 8 - Sisa 2 reps (Target Hypertrophy)">RPE 8 - Sisa 2 reps (Target Hypertrophy)</option>
+                        <option value="RPE 9 - Sisa 1 rep (Hard Effort)">RPE 9 - Sisa 1 rep (Hard Effort)</option>
+                        <option value="RPE 10 - Failure total (Max Effort)">RPE 10 - Failure Total (Max Effort)</option>
+                        <option value="RPE 6-7 - Ringan / Deload">RPE 6-7 - Ringan / Deload</option>
+                    </select>
+                </div>
+
+                <!-- Post Workout Refuel / Meal Notes -->
+                <div>
+                    <label class="block text-xs font-semibold text-gray-400 mb-1">Catatan Refuel / Post-Workout Meal (Opsional):</label>
+                    <input type="text" id="afterGymMeal" placeholder="Contoh: Whey Protein + 2 Pisang..." class="w-full bg-dark-bg border border-dark-border rounded-xl p-3 text-sm text-white focus:outline-none focus:border-brand-500">
+                </div>
+
+                <!-- Photo Check / Progress Upload -->
+                <div>
+                    <label class="block text-xs font-semibold text-gray-400 mb-1">Unggah Foto After Gym / Pump Check (Opsional):</label>
+                    <div class="flex items-center gap-3">
+                        <label class="bg-dark-hover border border-dark-border hover:border-brand-500 text-white px-4 py-2.5 rounded-xl text-xs font-semibold cursor-pointer flex items-center gap-2">
+                            <i class="fa-solid fa-camera text-brand-500"></i> Pilih Foto
+                            <input type="file" id="afterGymPhotoInput" accept="image/*" class="hidden" onchange="handleAfterGymPhotoSelect(event)">
+                        </label>
+                        <span id="afterGymPhotoStatus" class="text-xs text-gray-400 italic">Belum ada foto dipilih</span>
+                    </div>
+                    <!-- Photo Preview -->
+                    <div id="afterGymPhotoPreviewContainer" class="mt-3 hidden">
+                        <img id="afterGymPhotoPreview" src="" class="w-32 h-32 object-cover rounded-xl border border-brand-500">
+                    </div>
+                </div>
+
+                <!-- Overall Notes -->
+                <div>
+                    <label class="block text-xs font-semibold text-gray-400 mb-1">Catatan Evaluasi / Refleksi Sesi Ini:</label>
+                    <textarea id="afterGymNotes" rows="2" placeholder="Contoh: Form bench press lebih stabil hari ini, bahu kanan agak sedikit kaku..." class="w-full bg-dark-bg border border-dark-border rounded-xl p-3 text-sm text-white focus:outline-none focus:border-brand-500"></textarea>
+                </div>
+            </div>
+
+            <div class="p-4 border-t border-dark-border flex items-center justify-end gap-2 bg-dark-bg">
+                <button onclick="closeAfterGymModal()" class="px-4 py-2 rounded-xl text-xs font-bold text-gray-400 hover:text-white">Batal</button>
+                <button onclick="confirmFinishWorkout()" class="bg-brand-500 text-black px-5 py-2.5 rounded-xl text-xs font-extrabold hover:bg-brand-600 transition flex items-center gap-2">
+                    <i class="fa-solid fa-floppy-disk"></i> Simpan Catatan & Selesai
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        /* ==========================================
+           1. DATABASE KATALOG LATIHAN GYM
+           ========================================== */
+        const EXERCISE_DATABASE = [
+            // Dada (Chest)
+            { id: 'ex_1', name: 'Barbell Bench Press', muscle: 'Dada', equipment: 'Barbel', type: 'weight' },
+            { id: 'ex_2', name: 'Incline Bench Press', muscle: 'Dada', equipment: 'Barbel', type: 'weight' },
+            { id: 'ex_3', name: 'Decline Bench Press', muscle: 'Dada', equipment: 'Barbel', type: 'weight' },
+            { id: 'ex_4', name: 'Dumbbell Bench Press', muscle: 'Dada', equipment: 'Dumbbell', type: 'weight' },
+            { id: 'ex_5', name: 'Incline Dumbbell Press', muscle: 'Dada', equipment: 'Dumbbell', type: 'weight' },
+            { id: 'ex_6', name: 'Dumbbell Fly', muscle: 'Dada', equipment: 'Dumbbell', type: 'weight' },
+            { id: 'ex_7', name: 'Cable Fly', muscle: 'Dada', equipment: 'Kabel', type: 'weight' },
+            { id: 'ex_8', name: 'Pec Deck Fly', muscle: 'Dada', equipment: 'Mesin', type: 'weight' },
+            { id: 'ex_9', name: 'Chest Press Machine', muscle: 'Dada', equipment: 'Mesin', type: 'weight' },
+            { id: 'ex_10', name: 'Push-Up', muscle: 'Dada', equipment: 'Berat Badan', type: 'bodyweight' },
+
+            // Punggung (Back)
+            { id: 'ex_11', name: 'Deadlift', muscle: 'Punggung', equipment: 'Barbel', type: 'weight' },
+            { id: 'ex_12', name: 'Barbell Row', muscle: 'Punggung', equipment: 'Barbel', type: 'weight' },
+            { id: 'ex_13', name: 'Dumbbell Row', muscle: 'Punggung', equipment: 'Dumbbell', type: 'weight' },
+            { id: 'ex_14', name: 'Lat Pulldown', muscle: 'Punggung', equipment: 'Kabel', type: 'weight' },
+            { id: 'ex_15', name: 'Close-Grip Lat Pulldown', muscle: 'Punggung', equipment: 'Kabel', type: 'weight' },
+            { id: 'ex_16', name: 'Seated Cable Row', muscle: 'Punggung', equipment: 'Kabel', type: 'weight' },
+            { id: 'ex_17', name: 'Chest-Supported Row', muscle: 'Punggung', equipment: 'Mesin', type: 'weight' },
+            { id: 'ex_18', name: 'T-Bar Row', muscle: 'Punggung', equipment: 'Barbel', type: 'weight' },
+            { id: 'ex_19', name: 'Straight-Arm Pulldown', muscle: 'Punggung', equipment: 'Kabel', type: 'weight' },
+            { id: 'ex_20', name: 'Assisted Pull-Up', muscle: 'Punggung', equipment: 'Mesin', type: 'weight' },
+            { id: 'ex_21', name: 'Pull-Up', muscle: 'Punggung', equipment: 'Berat Badan', type: 'bodyweight' },
+            { id: 'ex_22', name: 'Back Extension', muscle: 'Punggung', equipment: 'Berat Badan', type: 'bodyweight' },
+
+            // Bahu (Shoulders)
+            { id: 'ex_23', name: 'Shoulder Press Machine', muscle: 'Bahu', equipment: 'Mesin', type: 'weight' },
+            { id: 'ex_24', name: 'Barbell Overhead Press', muscle: 'Bahu', equipment: 'Barbel', type: 'weight' },
+            { id: 'ex_25', name: 'Dumbbell Shoulder Press', muscle: 'Bahu', equipment: 'Dumbbell', type: 'weight' },
+            { id: 'ex_26', name: 'Arnold Press', muscle: 'Bahu', equipment: 'Dumbbell', type: 'weight' },
+            { id: 'ex_27', name: 'Dumbbell Lateral Raise', muscle: 'Bahu', equipment: 'Dumbbell', type: 'weight' },
+            { id: 'ex_28', name: 'Cable Lateral Raise', muscle: 'Bahu', equipment: 'Kabel', type: 'weight' },
+            { id: 'ex_29', name: 'Front Raise', muscle: 'Bahu', equipment: 'Dumbbell', type: 'weight' },
+            { id: 'ex_30', name: 'Rear Delt Fly', muscle: 'Bahu', equipment: 'Dumbbell', type: 'weight' },
+            { id: 'ex_31', name: 'Reverse Pec Deck', muscle: 'Bahu', equipment: 'Mesin', type: 'weight' },
+            { id: 'ex_32', name: 'Face Pull', muscle: 'Bahu', equipment: 'Kabel', type: 'weight' },
+            { id: 'ex_33', name: 'Barbell Shrug', muscle: 'Bahu', equipment: 'Barbel', type: 'weight' },
+            { id: 'ex_34', name: 'Dumbbell Shrug', muscle: 'Bahu', equipment: 'Dumbbell', type: 'weight' },
+
+            // Bisep (Biceps)
+            { id: 'ex_35', name: 'Barbell Curl', muscle: 'Bisep', equipment: 'Barbel', type: 'weight' },
+            { id: 'ex_36', name: 'EZ-Bar Curl', muscle: 'Bisep', equipment: 'Barbel', type: 'weight' },
+            { id: 'ex_37', name: 'Dumbbell Curl', muscle: 'Bisep', equipment: 'Dumbbell', type: 'weight' },
+            { id: 'ex_38', name: 'Alternating Dumbbell Curl', muscle: 'Bisep', equipment: 'Dumbbell', type: 'weight' },
+            { id: 'ex_39', name: 'Hammer Curl', muscle: 'Bisep', equipment: 'Dumbbell', type: 'weight' },
+            { id: 'ex_40', name: 'Preacher Curl', muscle: 'Bisep', equipment: 'Barbel', type: 'weight' },
+            { id: 'ex_41', name: 'Concentration Curl', muscle: 'Bisep', equipment: 'Dumbbell', type: 'weight' },
+            { id: 'ex_42', name: 'Cable Curl', muscle: 'Bisep', equipment: 'Kabel', type: 'weight' },
+            { id: 'ex_43', name: 'Incline Dumbbell Curl', muscle: 'Bisep', equipment: 'Dumbbell', type: 'weight' },
+
+            // Trisep (Triceps)
+            { id: 'ex_44', name: 'Triceps Pushdown', muscle: 'Trisep', equipment: 'Kabel', type: 'weight' },
+            { id: 'ex_45', name: 'Rope Pushdown', muscle: 'Trisep', equipment: 'Kabel', type: 'weight' },
+            { id: 'ex_46', name: 'Overhead Cable Extension', muscle: 'Trisep', equipment: 'Kabel', type: 'weight' },
+            { id: 'ex_47', name: 'Dumbbell Overhead Extension', muscle: 'Trisep', equipment: 'Dumbbell', type: 'weight' },
+            { id: 'ex_48', name: 'EZ-Bar Skull Crusher', muscle: 'Trisep', equipment: 'Barbel', type: 'weight' },
+            { id: 'ex_49', name: 'Close-Grip Bench Press', muscle: 'Trisep', equipment: 'Barbel', type: 'weight' },
+            { id: 'ex_50', name: 'Assisted Dip', muscle: 'Trisep', equipment: 'Mesin', type: 'weight' },
+            { id: 'ex_51', name: 'Triceps Kickback', muscle: 'Trisep', equipment: 'Dumbbell', type: 'weight' },
+
+            // Kaki (Legs)
+            { id: 'ex_52', name: 'Barbell Squat', muscle: 'Kaki', equipment: 'Barbel', type: 'weight' },
+            { id: 'ex_53', name: 'Goblet Squat', muscle: 'Kaki', equipment: 'Dumbbell', type: 'weight' },
+            { id: 'ex_54', name: 'Leg Press', muscle: 'Kaki', equipment: 'Mesin', type: 'weight' },
+            { id: 'ex_55', name: 'Hack Squat', muscle: 'Kaki', equipment: 'Mesin', type: 'weight' },
+            { id: 'ex_56', name: 'Leg Extension', muscle: 'Kaki', equipment: 'Mesin', type: 'weight' },
+            { id: 'ex_57', name: 'Seated Leg Curl', muscle: 'Kaki', equipment: 'Mesin', type: 'weight' },
+            { id: 'ex_58', name: 'Lying Leg Curl', muscle: 'Kaki', equipment: 'Mesin', type: 'weight' },
+            { id: 'ex_59', name: 'Romanian Deadlift', muscle: 'Kaki', equipment: 'Barbel', type: 'weight' },
+            { id: 'ex_60', name: 'Bulgarian Split Squat', muscle: 'Kaki', equipment: 'Dumbbell', type: 'weight' },
+            { id: 'ex_61', name: 'Walking Lunge', muscle: 'Kaki', equipment: 'Dumbbell', type: 'weight' },
+            { id: 'ex_62', name: 'Standing Calf Raise', muscle: 'Kaki', equipment: 'Mesin', type: 'weight' },
+            { id: 'ex_63', name: 'Seated Calf Raise', muscle: 'Kaki', equipment: 'Mesin', type: 'weight' },
+            { id: 'ex_64', name: 'Hip Thrust', muscle: 'Kaki', equipment: 'Barbel', type: 'weight' },
+            { id: 'ex_65', name: 'Glute Bridge', muscle: 'Kaki', equipment: 'Berat Badan', type: 'bodyweight' },
+            { id: 'ex_66', name: 'Hip Abductor Machine', muscle: 'Kaki', equipment: 'Mesin', type: 'weight' },
+            { id: 'ex_67', name: 'Hip Adductor Machine', muscle: 'Kaki', equipment: 'Mesin', type: 'weight' },
+
+            // Perut (Abs/Core)
+            { id: 'ex_68', name: 'Crunch', muscle: 'Perut', equipment: 'Berat Badan', type: 'bodyweight' },
+            { id: 'ex_69', name: 'Cable Crunch', muscle: 'Perut', equipment: 'Kabel', type: 'weight' },
+            { id: 'ex_70', name: 'Hanging Knee Raise', muscle: 'Perut', equipment: 'Berat Badan', type: 'bodyweight' },
+            { id: 'ex_71', name: 'Hanging Leg Raise', muscle: 'Perut', equipment: 'Berat Badan', type: 'bodyweight' },
+            { id: 'ex_72', name: 'Reverse Crunch', muscle: 'Perut', equipment: 'Berat Badan', type: 'bodyweight' },
+            { id: 'ex_73', name: 'Plank', muscle: 'Perut', equipment: 'Berat Badan', type: 'timed' },
+            { id: 'ex_74', name: 'Side Plank', muscle: 'Perut', equipment: 'Berat Badan', type: 'timed' },
+            { id: 'ex_75', name: 'Ab Wheel Rollout', muscle: 'Perut', equipment: 'Berat Badan', type: 'bodyweight' },
+            { id: 'ex_76', name: 'Russian Twist', muscle: 'Perut', equipment: 'Berat Badan', type: 'bodyweight' },
+            { id: 'ex_77', name: 'Pallof Press', muscle: 'Perut', equipment: 'Kabel', type: 'weight' },
+
+            // Lengan Bawah (Forearms)
+            { id: 'ex_78', name: 'Wrist Curl', muscle: 'Lengan Bawah', equipment: 'Barbel', type: 'weight' },
+            { id: 'ex_79', name: 'Reverse Wrist Curl', muscle: 'Lengan Bawah', equipment: 'Barbel', type: 'weight' },
+            { id: 'ex_80', name: 'Reverse Barbell Curl', muscle: 'Lengan Bawah', equipment: 'Barbel', type: 'weight' },
+            { id: 'ex_81', name: "Farmer's Carry", muscle: 'Lengan Bawah', equipment: 'Dumbbell', type: 'weight' },
+            { id: 'ex_82', name: 'Dead Hang', muscle: 'Lengan Bawah', equipment: 'Berat Badan', type: 'timed' },
+
+            // Kardio
+            { id: 'ex_83', name: 'Treadmill', muscle: 'Kardio', equipment: 'Mesin', type: 'cardio' },
+            { id: 'ex_84', name: 'Stationary Bike', muscle: 'Kardio', equipment: 'Mesin', type: 'cardio' },
+            { id: 'ex_85', name: 'Elliptical', muscle: 'Kardio', equipment: 'Mesin', type: 'cardio' },
+            { id: 'ex_86', name: 'Stair Climber', muscle: 'Kardio', equipment: 'Mesin', type: 'cardio' },
+            { id: 'ex_87', name: 'Rowing Machine', muscle: 'Kardio', equipment: 'Mesin', type: 'cardio' },
+            { id: 'ex_88', name: 'Jump Rope', muscle: 'Kardio', equipment: 'Berat Badan', type: 'cardio' },
+            { id: 'ex_89', name: 'Outdoor Walking', muscle: 'Kardio', equipment: 'Berat Badan', type: 'cardio' },
+            { id: 'ex_90', name: 'Outdoor Running', muscle: 'Kardio', equipment: 'Berat Badan', type: 'cardio' }
+        ];
+
+        /* Template Program Standards */
+        const PROGRAM_TEMPLATES = [
+            { id: "tmpl_push", name: "Push Day", desc: "Dada, Bahu, dan Trisep", exercises: ["Barbell Bench Press", "Incline Dumbbell Press", "Dumbbell Lateral Raise", "Triceps Pushdown"] },
+            { id: "tmpl_pull", name: "Pull Day", desc: "Punggung dan Bisep", exercises: ["Lat Pulldown", "Barbell Row", "Face Pull", "Barbell Curl"] },
+            { id: "tmpl_leg", name: "Leg Day", desc: "Kaki dan Core", exercises: ["Barbell Squat", "Romanian Deadlift", "Leg Press", "Standing Calf Raise"] },
+            { id: "tmpl_upper", name: "Upper Body", desc: "Fokus Tubuh Bagian Atas", exercises: ["Incline Bench Press", "Lat Pulldown", "Dumbbell Shoulder Press", "Hammer Curl"] },
+            { id: "tmpl_lower", name: "Lower Body", desc: "Fokus Tubuh Bagian Bawah", exercises: ["Barbell Squat", "Lying Leg Curl", "Bulgarian Split Squat", "Plank"] },
+            { id: "tmpl_full", name: "Full Body", desc: "Seluruh Kelompok Otot Utuh", exercises: ["Barbell Squat", "Barbell Bench Press", "Barbell Row", "Dumbbell Overhead Press"] },
+            { id: "tmpl_bro", name: "Bro Split", desc: "Satu Otot Per Sesi", exercises: ["Barbell Bench Press", "Incline Bench Press", "Dumbbell Fly", "Push-Up"] },
+            { id: "tmpl_ppl6", name: "PPL 6 Hari", desc: "Push-Pull-Legs Rutin 6 Hari", exercises: ["Barbell Bench Press", "Barbell Overhead Press", "Triceps Pushdown"] }
+        ];
+
+        /* ==========================================
+           2. STATE APP & LOCALSTORAGE MANAGEMENT
+           ========================================== */
+        let state = {
+            profile: {
+                name: "Athlete",
+                goal: "Membangun Otot (Hypertrophy)",
+                level: "Menengah (Intermediate)",
+                targetDays: 4
+            },
+            weeklySchedule: {
+                "Senin": "Push Day",
+                "Selasa": "Pull Day",
+                "Rabu": "Leg Day",
+                "Kamis": "Istirahat",
+                "Jumat": "Upper Body",
+                "Sabtu": "Lower Body",
+                "Minggu": "Istirahat"
+            },
+            activeWorkout: {
+                title: "Sesi Latihan Gym",
+                startTime: null,
+                exercises: []
+            },
+            history: [] // Holds completed workout sessions
+        };
+
+        // Temporary state for After Gym Log Modal
+        let currentAfterGymMood = 4; // default 🔥
+        let currentAfterGymPhotoBase64 = null;
+
+        // Timer State
+        let timerInterval = null;
+        let timerSecondsLeft = 0;
+        let isTimerRunning = false;
+
+        // Chart References
+        let dashChartRef = null;
+        let overloadChartRef = null;
+        let muscleChartRef = null;
+
+        // Filters State
+        let selectedMuscleFilter = "Semua";
+        let selectedEquipFilter = "Semua";
+        let modalSelectedMuscle = "Semua";
+
+        /* Load LocalStorage */
+        function loadStateFromStorage() {
+            const saved = localStorage.getItem('NEXSTRONG_STATE');
+            if (saved) {
+                try {
+                    const parsed = JSON.parse(saved);
+                    state = { ...state, ...parsed };
+                } catch (e) {
+                    console.error("Gagal membaca storage, menggunakan default.", e);
+                }
+            }
+        }
+
+        /* Save LocalStorage */
+        function saveStateToStorage() {
+            try {
+                localStorage.setItem('NEXSTRONG_STATE', JSON.stringify(state));
+            } catch (e) {
+                alert("Penyimpanan lokal penuh. Hapus beberapa foto lama jika tidak dapat menyimpan data.");
+            }
+        }
+
+        /* Initialize App on Load */
+        window.onload = function() {
+            loadStateFromStorage();
+            initFilters();
+            renderDashboard();
+            renderExercisesCatalog();
+            renderPrograms();
+            renderOverloadAnalysis();
+            renderHistoryStats();
+            populateProfileForm();
+            renderActiveWorkout();
+            
+            switchTab('dashboard');
+        };
+
+        /* Navigation Switcher */
+        function switchTab(tabId) {
+            document.querySelectorAll('.page-content').forEach(page => page.classList.add('hidden'));
+            const target = document.getElementById(`page-${tabId}`);
+            if (target) {
+                target.classList.remove('hidden');
+            }
+
+            // Desktop active state
+            document.querySelectorAll('#desktopNav .nav-item').forEach(btn => {
+                if (btn.getAttribute('data-tab') === tabId) {
+                    btn.classList.add('bg-dark-hover', 'text-brand-500');
+                    btn.classList.remove('text-gray-400');
+                } else {
+                    btn.classList.remove('bg-dark-hover', 'text-brand-500');
+                    btn.classList.add('text-gray-400');
+                }
+            });
+
+            if (tabId === 'dashboard') renderDashboard();
+            if (tabId === 'overload') renderOverloadAnalysis();
+            if (tabId === 'history') renderHistoryStats();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        /* ==========================================
+           3. DASHBOARD LOGIC
+           ========================================== */
+        function renderDashboard() {
+            const now = new Date();
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            document.getElementById('dashGreeting').innerText = `Halo, ${state.profile.name || 'Athlete'}! 🔥`;
+            document.getElementById('dashDate').innerText = now.toLocaleDateString('id-ID', options);
+
+            const todayStr = now.toISOString().split('T')[0];
+            const todayWorkouts = state.history.filter(h => h.date.startsWith(todayStr));
+            
+            let todaySets = 0;
+            let todayReps = 0;
+            let todayVol = 0;
+
+            todayWorkouts.forEach(w => {
+                w.exercises.forEach(ex => {
+                    ex.sets.forEach(s => {
+                        if (s.completed) {
+                            todaySets++;
+                            todayReps += (parseInt(s.reps) || 0);
+                            todayVol += ((parseFloat(s.weight) || 0) * (parseInt(s.reps) || 0));
+                        }
+                    });
+                });
+            });
+
+            document.getElementById('statTodayWorkouts').innerText = todayWorkouts.length;
+            document.getElementById('statTotalSets').innerText = todaySets;
+            document.getElementById('statTotalReps').innerText = todayReps;
+            document.getElementById('statTotalVolume').innerText = Math.round(todayVol).toLocaleString('id-ID');
+
+            // Weekly Schedule View
+            const days = ["Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu", "Minggu"];
+            const currentDayName = days[(now.getDay() + 6) % 7];
+            const schedContainer = document.getElementById('dashWeeklySchedule');
+            schedContainer.innerHTML = '';
+
+            days.forEach(day => {
+                const isToday = day === currentDayName;
+                const progName = state.weeklySchedule[day] || "Istirahat";
+                schedContainer.innerHTML += `
+                    <div class="flex items-center justify-between p-2.5 rounded-xl border ${isToday ? 'bg-brand-500/10 border-brand-500' : 'bg-dark-bg border-dark-border'}">
+                        <span class="text-xs font-bold ${isToday ? 'text-brand-500' : 'text-gray-400'}">${day}</span>
+                        <span class="text-xs font-medium text-white">${progName}</span>
+                    </div>
+                `;
+            });
+
+            // Dashboard Recent History List
+            const recentContainer = document.getElementById('dashRecentWorkouts');
+            recentContainer.innerHTML = '';
+            if (state.history.length === 0) {
+                recentContainer.innerHTML = `<p class="text-xs text-gray-500 italic py-4 text-center">Belum ada riwayat latihan. Klik tombol Mulai Latihan!</p>`;
+            } else {
+                const recent = [...state.history].reverse().slice(0, 3);
+                recent.forEach(h => {
+                    const totalSets = h.exercises.reduce((acc, ex) => acc + ex.sets.filter(s=>s.completed).length, 0);
+                    const totalVol = h.exercises.reduce((acc, ex) => acc + ex.sets.filter(s=>s.completed).reduce((sAcc, s) => sAcc + (s.weight * s.reps), 0), 0);
+                    
+                    const afterGymBadge = h.afterGym ? `<span class="text-[10px] bg-dark-hover border border-dark-border text-brand-500 px-2 py-0.5 rounded font-bold">${h.afterGym.pump || 'Pump Good'}</span>` : '';
+
+                    recentContainer.innerHTML += `
+                        <div class="p-3 bg-dark-bg rounded-xl border border-dark-border flex items-center justify-between gap-3">
+                            <div>
+                                <h4 class="font-bold text-sm text-white">${h.title}</h4>
+                                <p class="text-xs text-gray-400">${h.dateDisplay} • ${h.exercises.length} Latihan • ${totalSets} Set</p>
+                                <div class="mt-1 flex items-center gap-2">${afterGymBadge}</div>
+                            </div>
+                            <span class="text-xs font-bold text-brand-500 bg-brand-500/10 px-3 py-1 rounded-lg">${Math.round(totalVol)} kg</span>
+                        </div>
+                    `;
+                });
+            }
+
+            renderDashChart();
+        }
+
+        function renderDashChart() {
+            const ctx = document.getElementById('dashVolumeChart').getContext('2d');
+            if (dashChartRef) dashChartRef.destroy();
+
+            const labels = [];
+            const volumes = [];
+            for (let i = 6; i >= 0; i--) {
+                const d = new Date();
+                d.setDate(d.getDate() - i);
+                const dateStr = d.toISOString().split('T')[0];
+                labels.push(d.toLocaleDateString('id-ID', { weekday: 'short', day: 'numeric' }));
+
+                const vol = state.history
+                    .filter(h => h.date.startsWith(dateStr))
+                    .reduce((acc, h) => acc + h.exercises.reduce((eAcc, ex) => eAcc + ex.sets.filter(s=>s.completed).reduce((sAcc, s) => sAcc + (s.weight * s.reps), 0), 0), 0);
+                volumes.push(vol);
+            }
+
+            dashChartRef = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Volume (kg)',
+                        data: volumes,
+                        backgroundColor: '#ff6600',
+                        borderRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { grid: { color: '#26262b' }, ticks: { color: '#888' } },
+                        y: { grid: { color: '#26262b' }, ticks: { color: '#888' } }
+                    }
+                }
+            });
+        }
+
+        /* ==========================================
+           4. KATALOG LATIHAN & FILTERS
+           ========================================== */
+        function initFilters() {
+            const muscles = ["Semua", "Dada", "Punggung", "Bahu", "Bisep", "Trisep", "Kaki", "Perut", "Lengan Bawah", "Kardio"];
+            const equips = ["Semua", "Barbel", "Dumbbell", "Kabel", "Mesin", "Berat Badan"];
+
+            const mContainer = document.getElementById('muscleFilterContainer');
+            mContainer.innerHTML = muscles.map(m => `
+                <button onclick="setMuscleFilter('${m}')" class="px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition ${selectedMuscleFilter === m ? 'bg-brand-500 text-black' : 'bg-dark-hover text-gray-300'}">${m}</button>
+            `).join('');
+
+            const eContainer = document.getElementById('equipFilterContainer');
+            eContainer.innerHTML = equips.map(e => `
+                <button onclick="setEquipFilter('${e}')" class="px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition ${selectedEquipFilter === e ? 'bg-brand-500 text-black' : 'bg-dark-hover text-gray-300'}">${e}</button>
+            `).join('');
+        }
+
+        function setMuscleFilter(m) {
+            selectedMuscleFilter = m;
+            initFilters();
+            filterExercises();
+        }
+
+        function setEquipFilter(e) {
+            selectedEquipFilter = e;
+            initFilters();
+            filterExercises();
+        }
+
+        function filterExercises() {
+            const query = document.getElementById('exerciseSearchInput').value.toLowerCase();
+            const filtered = EXERCISE_DATABASE.filter(ex => {
+                const matchName = ex.name.toLowerCase().includes(query);
+                const matchMuscle = selectedMuscleFilter === "Semua" || ex.muscle === selectedMuscleFilter;
+                const matchEquip = selectedEquipFilter === "Semua" || ex.equipment === selectedEquipFilter;
+                return matchName && matchMuscle && matchEquip;
+            });
+            renderCatalogList(filtered);
+        }
+
+        function renderExercisesCatalog() {
+            filterExercises();
+        }
+
+        function renderCatalogList(list) {
+            const grid = document.getElementById('exerciseCatalogGrid');
+            grid.innerHTML = '';
+            if (list.length === 0) {
+                grid.innerHTML = `<p class="col-span-full text-center text-gray-500 text-sm py-8">Latihan tidak ditemukan.</p>`;
+                return;
+            }
+
+            list.forEach(ex => {
+                grid.innerHTML += `
+                    <div class="bg-dark-card p-4 rounded-xl border border-dark-border flex flex-col justify-between hover:border-gray-700 transition">
+                        <div>
+                            <div class="flex items-start justify-between gap-2 mb-2">
+                                <h4 class="font-bold text-white text-base">${ex.name}</h4>
+                                <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-brand-500/10 text-brand-500 uppercase">${ex.muscle}</span>
+                            </div>
+                            <p class="text-xs text-gray-400">Peralatan: <span class="text-gray-200">${ex.equipment}</span></p>
+                        </div>
+                        <button onclick="addExerciseToActiveSession('${ex.id}'); switchTab('workout');" class="mt-4 w-full bg-dark-hover hover:bg-brand-500 hover:text-black text-xs font-bold py-2 rounded-lg transition text-gray-300 flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-plus"></i> Tambah Ke Latihan
+                        </button>
+                    </div>
+                `;
+            });
+        }
+
+        /* ==========================================
+           5. ACTIVE WORKOUT SESSION & SET TRACKING
+           ========================================== */
+        function addExerciseToActiveSession(exId) {
+            const exData = EXERCISE_DATABASE.find(e => e.id === exId);
+            if (!exData) return;
+
+            const existing = state.activeWorkout.exercises.find(e => e.id === exId);
+            if (!existing) {
+                state.activeWorkout.exercises.push({
+                    id: exData.id,
+                    name: exData.name,
+                    muscle: exData.muscle,
+                    type: exData.type,
+                    notes: '',
+                    sets: [
+                        { weight: 10, reps: 10, rir: 2, completed: false }
+                    ]
+                });
+                saveStateToStorage();
+                renderActiveWorkout();
+            }
+        }
+
+        function renderActiveWorkout() {
+            const container = document.getElementById('activeExercisesList');
+            container.innerHTML = '';
+
+            const titleInput = document.getElementById('activeWorkoutTitle');
+            if (titleInput && state.activeWorkout.title) {
+                titleInput.value = state.activeWorkout.title;
+            }
+
+            if (state.activeWorkout.exercises.length === 0) {
+                container.innerHTML = `
+                    <div class="bg-dark-card p-12 rounded-2xl border border-dark-border text-center space-y-4">
+                        <div class="w-16 h-16 bg-dark-bg rounded-full flex items-center justify-center text-brand-500 mx-auto text-2xl">
+                            <i class="fa-solid fa-dumbbell"></i>
+                        </div>
+                        <h3 class="text-lg font-bold">Belum Ada Latihan Dipilih</h3>
+                        <p class="text-xs text-gray-400 max-w-sm mx-auto">Klik tombol "Tambah Latihan" di atas, pilih latihan dari katalog, atau pilih template pada menu Program Latihan untuk memulai.</p>
+                        <div class="flex flex-wrap justify-center gap-3">
+                            <button onclick="openExerciseSelectorModal()" class="bg-brand-500 text-black font-extrabold px-5 py-2.5 rounded-xl text-sm hover:bg-brand-600 transition btn-touch">
+                                Pilih Latihan Manual
+                            </button>
+                            <button onclick="switchTab('programs')" class="bg-dark-hover border border-dark-border text-white font-bold px-5 py-2.5 rounded-xl text-sm hover:border-brand-500 transition btn-touch">
+                                Pilih Dari Template
+                            </button>
+                        </div>
+                    </div>
+                `;
+                return;
+            }
+
+            state.activeWorkout.exercises.forEach((ex, exIdx) => {
+                let setsHtml = ex.sets.map((set, setIdx) => `
+                    <div class="flex items-center gap-2 sm:gap-3 py-2 border-b border-dark-border/50 text-sm flex-wrap sm:flex-nowrap">
+                        <span class="w-5 text-xs font-bold text-gray-500 text-center">${setIdx + 1}</span>
+                        
+                        <!-- Weight -->
+                        <div class="flex items-center gap-1 bg-dark-bg rounded-lg border border-dark-border p-1 flex-1 min-w-[100px]">
+                            <button onclick="adjustSetValue(${exIdx}, ${setIdx}, 'weight', -2.5)" class="w-6 h-6 bg-dark-hover rounded text-gray-300 font-bold hover:text-white flex items-center justify-center text-xs">-</button>
+                            <input type="number" step="0.5" min="0" value="${set.weight}" onchange="updateSetValue(${exIdx}, ${setIdx}, 'weight', this.value)" class="w-full text-center bg-transparent font-bold text-white text-xs focus:outline-none">
+                            <span class="text-[10px] text-gray-400 pr-1">kg</span>
+                            <button onclick="adjustSetValue(${exIdx}, ${setIdx}, 'weight', 2.5)" class="w-6 h-6 bg-dark-hover rounded text-gray-300 font-bold hover:text-white flex items-center justify-center text-xs">+</button>
+                        </div>
+
+                        <span class="text-gray-500 font-bold">×</span>
+
+                        <!-- Reps -->
+                        <div class="flex items-center gap-1 bg-dark-bg rounded-lg border border-dark-border p-1 flex-1 min-w-[90px]">
+                            <button onclick="adjustSetValue(${exIdx}, ${setIdx}, 'reps', -1)" class="w-6 h-6 bg-dark-hover rounded text-gray-300 font-bold hover:text-white flex items-center justify-center text-xs">-</button>
+                            <input type="number" min="0" value="${set.reps}" onchange="updateSetValue(${exIdx}, ${setIdx}, 'reps', this.value)" class="w-full text-center bg-transparent font-bold text-white text-xs focus:outline-none">
+                            <span class="text-[10px] text-gray-400 pr-1">reps</span>
+                            <button onclick="adjustSetValue(${exIdx}, ${setIdx}, 'reps', 1)" class="w-6 h-6 bg-dark-hover rounded text-gray-300 font-bold hover:text-white flex items-center justify-center text-xs">+</button>
+                        </div>
+
+                        <!-- Science-based RIR Selector -->
+                        <div class="flex items-center bg-dark-bg rounded-lg border border-dark-border px-2 py-1.5">
+                            <span class="text-[10px] text-gray-400 font-bold mr-1">RIR:</span>
+                            <select onchange="updateSetValue(${exIdx}, ${setIdx}, 'rir', this.value)" class="bg-transparent text-brand-500 font-bold text-xs focus:outline-none cursor-pointer">
+                                <option value="0" ${set.rir == 0 ? 'selected' : ''} class="bg-dark-card text-red-400">0 (Failure)</option>
+                                <option value="1" ${set.rir == 1 ? 'selected' : ''} class="bg-dark-card text-brand-500">1 (Sisa 1 rep)</option>
+                                <option value="2" ${(set.rir == 2 || set.rir == undefined) ? 'selected' : ''} class="bg-dark-card text-brand-500">2 (Sisa 2 reps)</option>
+                                <option value="3" ${set.rir == 3 ? 'selected' : ''} class="bg-dark-card text-green-400">3 (Sisa 3 reps)</option>
+                                <option value="4" ${set.rir == 4 ? 'selected' : ''} class="bg-dark-card text-gray-400">4+ (Ringan)</option>
+                            </select>
+                        </div>
+
+                        <button onclick="toggleSetCompleted(${exIdx}, ${setIdx})" class="w-8 h-8 rounded-xl flex items-center justify-center transition ${set.completed ? 'bg-green-600 text-white shadow-md shadow-green-900/40' : 'bg-dark-bg text-gray-600 border border-dark-border hover:border-green-500'}">
+                            <i class="fa-solid fa-check text-xs font-black"></i>
+                        </button>
+
+                        <button onclick="removeSetFromExercise(${exIdx}, ${setIdx})" class="w-6 h-6 text-gray-600 hover:text-red-400">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                    </div>
+                `).join('');
+
+                container.innerHTML += `
+                    <div class="bg-dark-card p-5 rounded-2xl border border-dark-border space-y-4">
+                        <div class="flex items-center justify-between border-b border-dark-border pb-3">
+                            <div>
+                                <h3 class="font-extrabold text-white text-lg">${ex.name}</h3>
+                                <span class="text-xs text-brand-500 font-semibold">${ex.muscle}</span>
+                            </div>
+                            <button onclick="removeExerciseFromSession(${exIdx})" class="text-xs text-red-400 hover:underline flex items-center gap-1">
+                                <i class="fa-solid fa-trash"></i> Hapus Latihan
+                            </button>
+                        </div>
+
+                        <div class="space-y-1">
+                            ${setsHtml}
+                        </div>
+
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-2">
+                            <button onclick="addSetToExercise(${exIdx})" class="bg-dark-bg hover:bg-dark-hover text-brand-500 border border-brand-500/30 text-xs font-bold py-2 px-4 rounded-xl transition flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-plus"></i> Tambah Set
+                            </button>
+                            <input type="text" value="${ex.notes || ''}" onchange="updateExerciseNotes(${exIdx}, this.value)" placeholder="Catatan opsional (contoh: Form bagus, tempo kontrol)..." class="bg-dark-bg border border-dark-border rounded-xl px-3 py-2 text-xs text-gray-300 focus:outline-none focus:border-brand-500 flex-1">
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function addSetToExercise(exIdx) {
+            const lastSet = state.activeWorkout.exercises[exIdx].sets.slice(-1)[0] || { weight: 10, reps: 10, rir: 2 };
+            state.activeWorkout.exercises[exIdx].sets.push({
+                weight: lastSet.weight,
+                reps: lastSet.reps,
+                rir: lastSet.rir || 2,
+                completed: false
+            });
+            saveStateToStorage();
+            renderActiveWorkout();
+        }
+
+        function removeSetFromExercise(exIdx, setIdx) {
+            state.activeWorkout.exercises[exIdx].sets.splice(setIdx, 1);
+            saveStateToStorage();
+            renderActiveWorkout();
+        }
+
+        function removeExerciseFromSession(exIdx) {
+            state.activeWorkout.exercises.splice(exIdx, 1);
+            saveStateToStorage();
+            renderActiveWorkout();
+        }
+
+        function updateSetValue(exIdx, setIdx, field, val) {
+            const numVal = Math.max(0, parseFloat(val) || 0);
+            state.activeWorkout.exercises[exIdx].sets[setIdx][field] = numVal;
+            saveStateToStorage();
+        }
+
+        function adjustSetValue(exIdx, setIdx, field, delta) {
+            const current = state.activeWorkout.exercises[exIdx].sets[setIdx][field];
+            const updated = Math.max(0, current + delta);
+            state.activeWorkout.exercises[exIdx].sets[setIdx][field] = updated;
+            saveStateToStorage();
+            renderActiveWorkout();
+        }
+
+        function toggleSetCompleted(exIdx, setIdx) {
+            const set = state.activeWorkout.exercises[exIdx].sets[setIdx];
+            set.completed = !set.completed;
+            saveStateToStorage();
+            renderActiveWorkout();
+
+            if (set.completed) {
+                startTimer(120); // 2 mins science recommended
+            }
+        }
+
+        function updateExerciseNotes(exIdx, val) {
+            state.activeWorkout.exercises[exIdx].notes = val;
+            saveStateToStorage();
+        }
+
+        /* ==========================================
+           6. AFTER GYM LOG MODAL & FINISH WORKOUT
+           ========================================== */
+        function openAfterGymModal() {
+            if (state.activeWorkout.exercises.length === 0) {
+                alert("Tambahkan setidaknya 1 latihan sebelum menyelesaikan sesi.");
+                return;
+            }
+            document.getElementById('afterGymModal').classList.remove('hidden');
+            setAfterGymMood(4);
+            currentAfterGymPhotoBase64 = null;
+            document.getElementById('afterGymPhotoStatus').innerText = "Belum ada foto dipilih";
+            document.getElementById('afterGymPhotoPreviewContainer').classList.add('hidden');
+            document.getElementById('afterGymNotes').value = '';
+            document.getElementById('afterGymMeal').value = '';
+        }
+
+        function closeAfterGymModal() {
+            document.getElementById('afterGymModal').classList.add('hidden');
+        }
+
+        function setAfterGymMood(score) {
+            currentAfterGymMood = score;
+            const btns = document.querySelectorAll('#afterGymMoodGroup .mood-btn');
+            btns.forEach((btn, idx) => {
+                if (idx + 1 === score) {
+                    btn.classList.add('border-brand-500', 'bg-brand-500/20');
+                } else {
+                    btn.classList.remove('border-brand-500', 'bg-brand-500/20');
+                }
+            });
+        }
+
+        function handleAfterGymPhotoSelect(event) {
+            const file = event.target.files[0];
+            if (file) {
+                if (file.size > 2 * 1024 * 1024) {
+                    alert("Ukuran foto maksimal 2MB untuk menjaga performa penyimpanan.");
+                    return;
+                }
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    currentAfterGymPhotoBase64 = e.target.result;
+                    document.getElementById('afterGymPhotoPreview').src = e.target.result;
+                    document.getElementById('afterGymPhotoPreviewContainer').classList.remove('hidden');
+                    document.getElementById('afterGymPhotoStatus').innerText = file.name;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function confirmFinishWorkout() {
+            const title = document.getElementById('activeWorkoutTitle').value.trim() || "Sesi Latihan Gym";
+            const now = new Date();
+            const dateStr = now.toISOString();
+            const dateDisplay = now.toLocaleDateString('id-ID', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' });
+
+            const moodEmojis = ["😫", "😐", "🙂", "🔥", "🚀"];
+            const afterGymData = {
+                moodScore: currentAfterGymMood,
+                moodEmoji: moodEmojis[currentAfterGymMood - 1],
+                pump: document.getElementById('afterGymPump').value,
+                rpe: document.getElementById('afterGymRpe').value,
+                meal: document.getElementById('afterGymMeal').value.trim(),
+                notes: document.getElementById('afterGymNotes').value.trim(),
+                photo: currentAfterGymPhotoBase64
+            };
+
+            const completedSession = {
+                id: 'session_' + Date.now(),
+                title: title,
+                date: dateStr,
+                dateDisplay: dateDisplay,
+                exercises: JSON.parse(JSON.stringify(state.activeWorkout.exercises)),
+                afterGym: afterGymData
+            };
+
+            state.history.push(completedSession);
+            state.activeWorkout.exercises = [];
+            state.activeWorkout.title = "Sesi Latihan Gym";
+            saveStateToStorage();
+
+            closeAfterGymModal();
+            renderActiveWorkout();
+            renderDashboard();
+            switchTab('dashboard');
+            alert("Sesi latihan & Evaluasi After Gym berhasil disimpan! Sesi yang hebat! 💪");
+        }
+
+        /* ==========================================
+           7. REST TIMER LOGIC
+           ========================================== */
+        function startTimer(seconds) {
+            clearInterval(timerInterval);
+            timerSecondsLeft = seconds;
+            isTimerRunning = true;
+            updateTimerDisplay();
+            timerInterval = setInterval(() => {
+                if (timerSecondsLeft > 0) {
+                    timerSecondsLeft--;
+                    updateTimerDisplay();
+                } else {
+                    clearInterval(timerInterval);
+                    isTimerRunning = false;
+                    updateTimerDisplay();
+                    if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
+                }
+            }, 1000);
+        }
+
+        function toggleTimer() {
+            if (isTimerRunning) {
+                clearInterval(timerInterval);
+                isTimerRunning = false;
+            } else if (timerSecondsLeft > 0) {
+                isTimerRunning = true;
+                timerInterval = setInterval(() => {
+                    if (timerSecondsLeft > 0) {
+                        timerSecondsLeft--;
+                        updateTimerDisplay();
+                    } else {
+                        clearInterval(timerInterval);
+                        isTimerRunning = false;
+                        updateTimerDisplay();
+                    }
+                }, 1000);
+            } else {
+                startTimer(120);
+            }
+            updateTimerDisplay();
+        }
+
+        function resetTimer() {
+            clearInterval(timerInterval);
+            isTimerRunning = false;
+            timerSecondsLeft = 0;
+            updateTimerDisplay();
+        }
+
+        function updateTimerDisplay() {
+            const mins = Math.floor(timerSecondsLeft / 60);
+            const secs = timerSecondsLeft % 60;
+            const formatted = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+
+            document.getElementById('workoutTimerDisplay').innerText = formatted;
+            document.getElementById('sidebarTimerDisplay').innerText = formatted;
+
+            const timerWidget = document.getElementById('sidebarTimerWidget');
+            if (timerSecondsLeft > 0) {
+                timerWidget.classList.remove('hidden');
+            }
+
+            const playBtn = document.getElementById('timerToggleBtn');
+            const sidePlayBtn = document.getElementById('sidebarTimerPlayBtn');
+            if (isTimerRunning) {
+                if (playBtn) playBtn.innerHTML = `<i class="fa-solid fa-pause"></i> Jeda`;
+                if (sidePlayBtn) sidePlayBtn.innerHTML = `<i class="fa-solid fa-pause"></i>`;
+            } else {
+                if (playBtn) playBtn.innerHTML = `<i class="fa-solid fa-play"></i> Mulai`;
+                if (sidePlayBtn) sidePlayBtn.innerHTML = `<i class="fa-solid fa-play"></i>`;
+            }
+        }
+
+        /* ==========================================
+           8. MODAL EXERCISE SELECTOR
+           ========================================== */
+        function openExerciseSelectorModal() {
+            document.getElementById('exerciseModal').classList.remove('hidden');
+            renderModalFilterTabs();
+            renderModalExercises();
+        }
+
+        function closeExerciseSelectorModal() {
+            document.getElementById('exerciseModal').classList.add('hidden');
+        }
+
+        function renderModalFilterTabs() {
+            const muscles = ["Semua", "Dada", "Punggung", "Bahu", "Bisep", "Trisep", "Kaki", "Perut", "Kardio"];
+            const container = document.getElementById('modalMuscleFilter');
+            container.innerHTML = muscles.map(m => `
+                <button onclick="setModalMuscle('${m}')" class="px-3 py-1 rounded-lg transition whitespace-nowrap ${modalSelectedMuscle === m ? 'bg-brand-500 text-black font-bold' : 'bg-dark-bg text-gray-300'}">${m}</button>
+            `).join('');
+        }
+
+        function setModalMuscle(m) {
+            modalSelectedMuscle = m;
+            renderModalFilterTabs();
+            renderModalExercises();
+        }
+
+        function renderModalExercises() {
+            const query = document.getElementById('modalSearchInput').value.toLowerCase();
+            const container = document.getElementById('modalExerciseList');
+            container.innerHTML = '';
+
+            const filtered = EXERCISE_DATABASE.filter(ex => {
+                const matchName = ex.name.toLowerCase().includes(query);
+                const matchMuscle = modalSelectedMuscle === "Semua" || ex.muscle === modalSelectedMuscle;
+                return matchName && matchMuscle;
+            });
+
+            filtered.forEach(ex => {
+                container.innerHTML += `
+                    <div onclick="addExerciseToActiveSession('${ex.id}'); closeExerciseSelectorModal();" class="p-3 bg-dark-bg hover:bg-dark-hover rounded-xl border border-dark-border flex items-center justify-between cursor-pointer transition">
+                        <div>
+                            <h4 class="font-bold text-sm text-white">${ex.name}</h4>
+                            <span class="text-[10px] text-gray-400">${ex.muscle} • ${ex.equipment}</span>
+                        </div>
+                        <i class="fa-solid fa-circle-plus text-brand-500 text-lg"></i>
+                    </div>
+                `;
+            });
+        }
+
+        /* ==========================================
+           9. PROGRAM & SCHEDULE LOGIC
+           ========================================== */
+        function renderPrograms() {
+            const grid = document.getElementById('programsTemplateGrid');
+            grid.innerHTML = PROGRAM_TEMPLATES.map(p => `
+                <div class="bg-dark-card p-5 rounded-2xl border border-dark-border flex flex-col justify-between">
+                    <div>
+                        <h4 class="font-bold text-lg text-white mb-1">${p.name}</h4>
+                        <p class="text-xs text-brand-500 font-semibold mb-3">${p.desc}</p>
+                        <div class="space-y-1 mb-4">
+                            ${p.exercises.map(e => `<p class="text-xs text-gray-300 flex items-center gap-1.5"><i class="fa-solid fa-check text-[10px] text-brand-500"></i> ${e}</p>`).join('')}
+                        </div>
+                    </div>
+                    <button onclick="applyProgramTemplate('${p.name}')" class="w-full bg-dark-hover hover:bg-brand-500 hover:text-black text-xs font-bold py-2 rounded-xl transition text-gray-300">
+                        Gunakan Template Ini
+                    </button>
+                </div>
+            `).join('');
+
+            const days = ["Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu", "Minggu"];
+            const schedConfig = document.getElementById('weeklyScheduleConfig');
+            schedConfig.innerHTML = days.map(d => `
+                <div class="bg-dark-bg p-3 rounded-xl border border-dark-border">
+                    <label class="block text-xs font-bold text-brand-500 mb-1">${d}</label>
+                    <input type="text" value="${state.weeklySchedule[d] || 'Istirahat'}" onchange="updateWeeklyScheduleDay('${d}', this.value)" class="w-full bg-dark-card border border-dark-border rounded-lg p-2 text-xs text-white focus:outline-none focus:border-brand-500">
+                </div>
+            `).join('');
+        }
+
+        function updateWeeklyScheduleDay(day, val) {
+            state.weeklySchedule[day] = val.trim() || "Istirahat";
+            saveStateToStorage();
+            renderDashboard();
+        }
+
+        function applyProgramTemplate(templateName) {
+            const tmpl = PROGRAM_TEMPLATES.find(p => p.name === templateName);
+            if (!tmpl) return;
+
+            if (confirm(`Gunakan template "${tmpl.name}" untuk sesi latihan sekarang?`)) {
+                state.activeWorkout.title = `Sesi Latihan - ${tmpl.name}`;
+
+                tmpl.exercises.forEach(exName => {
+                    const matchedEx = EXERCISE_DATABASE.find(e => e.name.toLowerCase() === exName.toLowerCase());
+                    if (matchedEx) {
+                        const existing = state.activeWorkout.exercises.find(e => e.id === matchedEx.id);
+                        if (!existing) {
+                            state.activeWorkout.exercises.push({
+                                id: matchedEx.id,
+                                name: matchedEx.name,
+                                muscle: matchedEx.muscle,
+                                type: matchedEx.type,
+                                notes: '',
+                                sets: [
+                                    { weight: 10, reps: 10, rir: 2, completed: false },
+                                    { weight: 10, reps: 10, rir: 2, completed: false },
+                                    { weight: 10, reps: 10, rir: 2, completed: false }
+                                ]
+                            });
+                        }
+                    }
+                });
+
+                saveStateToStorage();
+                renderActiveWorkout();
+                switchTab('workout');
+            }
+        }
+
+        function createCustomProgram() {
+            const name = prompt("Masukkan Nama Program Kustom (contoh: Fullbody Explosive):");
+            if (name) {
+                PROGRAM_TEMPLATES.push({
+                    id: 'tmpl_' + Date.now(),
+                    name: name,
+                    desc: "Program Kustom Pengguna",
+                    exercises: ["Barbell Bench Press", "Barbell Squat", "Lat Pulldown"]
+                });
+                renderPrograms();
+            }
+        }
+
+        /* ==========================================
+           10. PROGRESSIVE OVERLOAD LOGIC
+           ========================================== */
+        function renderOverloadAnalysis() {
+            const select = document.getElementById('overloadExerciseSelect');
+            select.innerHTML = EXERCISE_DATABASE.map(ex => `<option value="${ex.name}">${ex.name} (${ex.muscle})</option>`).join('');
+
+            const selectedName = select.value || "Barbell Bench Press";
+            analyzeExerciseOverload(selectedName);
+        }
+
+        function analyzeExerciseOverload(exName) {
+            const sessionsWithEx = [];
+            state.history.forEach(h => {
+                const foundEx = h.exercises.find(e => e.name === exName);
+                if (foundEx) {
+                    const validSets = foundEx.sets.filter(s => s.completed);
+                    if (validSets.length > 0) {
+                        const maxW = Math.max(...validSets.map(s => parseFloat(s.weight) || 0));
+                        const totalVol = validSets.reduce((acc, s) => acc + (s.weight * s.reps), 0);
+                        const bestSet = validSets.reduce((prev, current) => (current.weight > prev.weight) ? current : prev, validSets[0]);
+                        const est1RM = bestSet.weight * (1 + (bestSet.reps / 30));
+
+                        sessionsWithEx.push({
+                            date: h.dateDisplay,
+                            rawDate: h.date,
+                            sets: validSets,
+                            maxWeight: maxW,
+                            totalVol: totalVol,
+                            bestSet: bestSet,
+                            est1RM: est1RM
+                        });
+                    }
+                }
+            });
+
+            const prEl = document.getElementById('overloadPR');
+            const prDetEl = document.getElementById('overloadPRDetails');
+            const lastWEl = document.getElementById('overloadLastWeight');
+            const lastRepsEl = document.getElementById('overloadLastReps');
+            const recEl = document.getElementById('overloadRecommendation');
+            const reasonEl = document.getElementById('overloadReason');
+
+            if (sessionsWithEx.length === 0) {
+                prEl.innerText = "0 kg";
+                prDetEl.innerText = "Belum ada riwayat tercatat.";
+                lastWEl.innerText = "0 kg";
+                lastRepsEl.innerText = "-";
+                recEl.innerText = "Belum Ada Data";
+                reasonEl.innerText = "Selesaikan sesi latihan dengan gerakan ini terlebih dahulu.";
+                renderOverloadChart([], []);
+                document.getElementById('overloadHistoryTable').innerHTML = `<tr><td colspan="4" class="p-4 text-center text-gray-500">Tidak ada data riwayat untuk latihan ini.</td></tr>`;
+                return;
+            }
+
+            const prSession = sessionsWithEx.reduce((prev, current) => (current.maxWeight > prev.maxWeight) ? current : prev, sessionsWithEx[0]);
+            prEl.innerText = `${prSession.maxWeight} kg`;
+            prDetEl.innerText = `Dicapai pada ${prSession.date}`;
+
+            const lastSession = sessionsWithEx[sessionsWithEx.length - 1];
+            lastWEl.innerText = `${lastSession.bestSet.weight} kg`;
+            lastRepsEl.innerText = `${lastSession.bestSet.reps} reps (RIR ${lastSession.bestSet.rir ?? 2}) pada ${lastSession.date}`;
+
+            if (lastSession.bestSet.reps >= 10) {
+                const nextWeight = lastSession.bestSession ? lastSession.bestSet.weight + 2.5 : lastSession.bestSet.weight + 2.5;
+                recEl.innerText = `Naikkan Beban ke ${nextWeight} kg (+2.5 kg)`;
+                reasonEl.innerText = `Target 10 reps telah tercapai. Double progression merekomendasikan kenaikan bertahap.`;
+            } else {
+                recEl.innerText = `Tetap di Beban ${lastSession.bestSet.weight} kg`;
+                reasonEl.innerText = `Fokus untuk menambah 1-2 repetisi lagi hingga RIR 1-2 sebelum menaikkan beban eksternal.`;
+            }
+
+            const tableBody = document.getElementById('overloadHistoryTable');
+            tableBody.innerHTML = sessionsWithEx.slice().reverse().map(s => `
+                <tr>
+                    <td class="p-3 text-white font-semibold">${s.date}</td>
+                    <td class="p-3">${s.sets.map(st => `<span class="inline-block bg-dark-bg px-2 py-0.5 rounded text-xs border border-dark-border mr-1 mb-1">${st.weight}kg × ${st.reps} <span class="text-brand-500 font-bold">(RIR ${st.rir ?? 2})</span></span>`).join('')}</td>
+                    <td class="p-3 text-brand-500 font-bold">${Math.round(s.est1RM)} kg</td>
+                    <td class="p-3 font-medium">${Math.round(s.totalVol)} kg</td>
+                </tr>
+            `).join('');
+
+            const chartLabels = sessionsWithEx.map(s => s.date);
+            const chartData = sessionsWithEx.map(s => Math.round(s.est1RM));
+            renderOverloadChart(chartLabels, chartData);
+        }
+
+        function renderOverloadChart(labels, data) {
+            const ctx = document.getElementById('overloadChart').getContext('2d');
+            if (overloadChartRef) overloadChartRef.destroy();
+
+            overloadChartRef = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Est. 1RM (kg)',
+                        data: data,
+                        borderColor: '#ff6600',
+                        backgroundColor: 'rgba(255, 102, 0, 0.1)',
+                        fill: true,
+                        tension: 0.3
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { grid: { color: '#26262b' }, ticks: { color: '#888' } },
+                        y: { grid: { color: '#26262b' }, ticks: { color: '#888' } }
+                    }
+                }
+            });
+        }
+
+        /* ==========================================
+           11. HISTORY & AFTER GYM STATS RENDERING
+           ========================================== */
+        function renderHistoryStats() {
+            const container = document.getElementById('fullHistoryLogs');
+            container.innerHTML = '';
+
+            if (state.history.length === 0) {
+                container.innerHTML = `<p class="text-gray-500 text-xs text-center py-6">Belum ada catatan riwayat sesi latihan.</p>`;
+            } else {
+                [...state.history].reverse().forEach((sess) => {
+                    const totalVol = sess.exercises.reduce((acc, ex) => acc + ex.sets.filter(s=>s.completed).reduce((sAcc, s) => sAcc + (s.weight * s.reps), 0), 0);
+                    
+                    let exDetails = sess.exercises.map(ex => `
+                        <div class="text-xs space-y-1">
+                            <span class="font-bold text-white">${ex.name}</span>
+                            <div class="flex flex-wrap gap-1">
+                                ${ex.sets.map(s => `<span class="bg-dark-bg border border-dark-border px-2 py-0.5 rounded text-[11px] ${s.completed ? 'text-gray-300' : 'text-gray-600 line-through'}">${s.weight}kg × ${s.reps} <span class="text-brand-500 font-bold">RIR ${s.rir ?? 2}</span></span>`).join('')}
+                            </div>
+                        </div>
+                    `).join('');
+
+                    // Render After Gym Block if exists
+                    let afterGymBlock = '';
+                    if (sess.afterGym) {
+                        const ag = sess.afterGym;
+                        afterGymBlock = `
+                            <div class="mt-3 pt-3 border-t border-dark-border/60 bg-dark-bg/60 p-3 rounded-xl space-y-2">
+                                <div class="flex items-center justify-between text-xs">
+                                    <span class="font-bold text-brand-500 flex items-center gap-1.5">
+                                        <i class="fa-solid fa-heart-pulse"></i> After Gym Evaluation
+                                    </span>
+                                    <span class="text-base">${ag.moodEmoji || '🔥'}</span>
+                                </div>
+                                <div class="grid grid-cols-2 gap-2 text-[11px] text-gray-300">
+                                    <p><strong>Pump:</strong> ${ag.pump || '-'}</p>
+                                    <p><strong>Intensitas:</strong> ${ag.rpe || '-'}</p>
+                                    ${ag.meal ? `<p class="col-span-2"><strong>Refuel Meal:</strong> ${ag.meal}</p>` : ''}
+                                    ${ag.notes ? `<p class="col-span-2 italic text-gray-400">"${ag.notes}"</p>` : ''}
+                                </div>
+                                ${ag.photo ? `
+                                    <div class="pt-1">
+                                        <img src="${ag.photo}" alt="After Gym Photo" class="w-24 h-24 object-cover rounded-lg border border-dark-border">
+                                    </div>
+                                ` : ''}
+                            </div>
+                        `;
+                    }
+
+                    container.innerHTML += `
+                        <div class="bg-dark-bg p-4 rounded-xl border border-dark-border space-y-3">
+                            <div class="flex items-center justify-between border-b border-dark-border pb-2">
+                                <div>
+                                    <h4 class="font-bold text-white text-base">${sess.title}</h4>
+                                    <span class="text-xs text-gray-400">${sess.dateDisplay}</span>
+                                </div>
+                                <div class="flex items-center gap-3">
+                                    <span class="text-xs font-bold text-brand-500 bg-brand-500/10 px-3 py-1 rounded-lg">Vol: ${Math.round(totalVol)} kg</span>
+                                    <button onclick="deleteHistorySession('${sess.id}')" class="text-xs text-red-400 hover:text-red-300"><i class="fa-solid fa-trash"></i></button>
+                                </div>
+                            </div>
+                            <div class="space-y-2">
+                                ${exDetails}
+                            </div>
+                            ${afterGymBlock}
+                        </div>
+                    `;
+                });
+            }
+
+            renderMuscleChart();
+        }
+
+        function deleteHistorySession(sessId) {
+            if (confirm("Apakah Anda yakin ingin menghapus catatan sesi latihan ini?")) {
+                state.history = state.history.filter(s => s.id !== sessId);
+                saveStateToStorage();
+                renderHistoryStats();
+                renderDashboard();
+            }
+        }
+
+        function renderMuscleChart() {
+            const ctx = document.getElementById('muscleDistributionChart').getContext('2d');
+            if (muscleChartRef) muscleChartRef.destroy();
+
+            const muscleCounts = {};
+            state.history.forEach(h => {
+                h.exercises.forEach(ex => {
+                    const completedSets = ex.sets.filter(s => s.completed).length;
+                    muscleCounts[ex.muscle] = (muscleCounts[ex.muscle] || 0) + completedSets;
+                });
+            });
+
+            const labels = Object.keys(muscleCounts);
+            const data = Object.values(muscleCounts);
+
+            muscleChartRef = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: labels.length > 0 ? labels : ['Belum Ada Data'],
+                    datasets: [{
+                        data: data.length > 0 ? data : [1],
+                        backgroundColor: ['#ff6600', '#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#ec4899', '#64748b']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { position: 'bottom', labels: { color: '#ccc', font: { size: 10 } } } }
+                }
+            });
+        }
+
+        /* ==========================================
+           12. USER PROFILE & DATA IMPORT/EXPORT
+           ========================================== */
+        function populateProfileForm() {
+            document.getElementById('profName').value = state.profile.name || '';
+            document.getElementById('profGoal').value = state.profile.goal || 'Membangun Otot (Hypertrophy)';
+            document.getElementById('profLevel').value = state.profile.level || 'Menengah (Intermediate)';
+            document.getElementById('profTargetDays').value = state.profile.targetDays || 4;
+        }
+
+        function saveUserProfile() {
+            state.profile.name = document.getElementById('profName').value.trim() || 'Athlete';
+            state.profile.goal = document.getElementById('profGoal').value;
+            state.profile.level = document.getElementById('profLevel').value;
+            state.profile.targetDays = parseInt(document.getElementById('profTargetDays').value) || 4;
+
+            saveStateToStorage();
+            renderDashboard();
+            alert("Profil berhasil disimpan!");
+        }
+
+        function exportDataJSON() {
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(state, null, 2));
+            const downloadAnchor = document.createElement('a');
+            downloadAnchor.setAttribute("href", dataStr);
+            downloadAnchor.setAttribute("download", `NEXSTRONG_Backup_${new Date().toISOString().split('T')[0]}.json`);
+            document.body.appendChild(downloadAnchor);
+            downloadAnchor.click();
+            downloadAnchor.remove();
+        }
+
+        function importDataJSON(event) {
+            const fileReader = new FileReader();
+            fileReader.onload = function(e) {
+                try {
+                    const importedState = JSON.parse(e.target.result);
+                    if (confirm("Impor data JSON akan menggantikan seluruh data yang ada saat ini. Lanjutkan?")) {
+                        state = { ...state, ...importedState };
+                        saveStateToStorage();
+                        location.reload();
+                    }
+                } catch (err) {
+                    alert("Gagal membaca file JSON. Format file tidak valid.");
+                }
+            };
+            if (event.target.files[0]) {
+                fileReader.readAsText(event.target.files[0]);
+            }
+        }
+
+        function clearAllDataConfirm() {
+            if (confirm("PERINGATAN: Tindakan ini akan menghapus SELURUH riwayat latihan dan profil Anda secara permanen. Lanjutkan?")) {
+                localStorage.removeItem('NEXSTRONG_STATE');
+                location.reload();
+            }
+        }
+    </script>
+</body>
+</html>
